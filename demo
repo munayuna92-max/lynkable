@@ -1,0 +1,50 @@
+import logoBlue1 from "./6logo-blue-1.png";
+import { KitchenHeroSection } from "./KitchenHeroSection";
+import { KitchenImageSection } from "./KitchenImageSection";
+import { KitchenInfoSection } from "./KitchenInfoSection";
+import group1 from "./group-1.png";
+
+export const MacbookAir = (): JSX.Element => {
+  return (
+    <div className="bg-white w-full min-w-[1280px] h-[3618px] relative">
+      <KitchenHeroSection />
+      <div className="inline-flex items-center absolute top-[52px] left-[104px] rotate-90">
+        <div className="relative w-[20.28px] h-[82.38px]">
+          <img
+            className="absolute top-[31px] left-[-31px] w-[82px] h-5 aspect-[4.02] object-cover"
+            alt="Element blue"
+            src={logoBlue1}
+          />
+        </div>
+
+        <div className="relative w-16 h-[11px] ml-[-6.22px] mr-[-26.50px] -rotate-90 [font-family:'Red_Hat_Display-Light',Helvetica] font-light text-[#4edbef] text-[6px] tracking-[0.90px] leading-[normal]">
+          with Yuil Robotics
+        </div>
+      </div>
+
+      <div className="absolute top-[905px] left-0 w-[1280px] h-[904px] overflow-hidden rotate-180">
+        <img
+          className="absolute w-[1280px] h-[904px] top-0 left-0 -rotate-180"
+          alt="Group"
+          src={group1}
+        />
+
+        <div className="absolute w-[107.72%] h-[42.86%] top-[65.15%] left-[-6.49%] rotate-180 [-webkit-text-stroke:1px_#4edbef0a] [font-family:'Red_Hat_Display-Black',Helvetica] font-black text-transparent text-[200px] tracking-[0] leading-[normal]">
+          Lynkable
+        </div>
+      </div>
+
+      <KitchenImageSection />
+      <KitchenInfoSection />
+      <div className="flex flex-col w-[327px] h-[47px] items-start gap-1 absolute top-[1501px] left-32">
+        <div className="relative self-stretch mt-[-1.00px] [font-family:'Red_Hat_Display-Bold',Helvetica] font-bold text-white text-xs tracking-[0] leading-[normal]">
+          소노프라이
+        </div>
+
+        <p className="relative self-stretch [font-family:'Red_Hat_Display-Regular',Helvetica] font-normal text-[#4edbef] text-[8px] tracking-[0] leading-[normal]">
+          유해가스 80% 감소, 기름값 30% 감소
+        </p>
+      </div>
+    </div>
+  );
+};
