@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lynkable 휴게소 식자재 전략 보고서</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Bebas+Neue&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --accent: #c8f542;
+    --accent2: #42e4f5;
+    --accent3: #f5a623;
+    --danger: #ff4757;
+    --text: #e8e8f0;
+    --text-muted: #7878a0;
+    --border: rgba(200,245,66,0.15);
+    --border2: rgba(255,255,255,0.06);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  /* HEADER */
+  .header {
+    padding: 60px 60px 40px;
+    border-bottom: 1px solid var(--border2);
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(200,245,66,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 64px;
+    letter-spacing: 2px;
+    line-height: 1;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .header-sub {
+    color: var(--text-muted);
+    font-size: 15px;
+    font-weight: 300;
+  }
+  .header-meta {
+    display: flex;
+    gap: 32px;
+    margin-top: 28px;
+  }
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .meta-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+  .meta-value {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--accent);
+  }
+
+  /* NAV */
+  .nav {
+    display: flex;
+    gap: 0;
+    padding: 0 60px;
+    border-bottom: 1px solid var(--border2);
+    overflow-x: auto;
+  }
+  .nav-item {
+    padding: 16px 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .nav-item:hover { color: var(--text); }
+  .nav-item.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* MAIN */
+  .main {
+    padding: 48px 60px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* SECTIONS */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* SECTION TITLE */
+  .section-title {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+  .section-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 80px;
+    color: rgba(200,245,66,0.1);
+    line-height: 1;
+  }
+  .section-text h2 {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .section-text p {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-top: 4px;
+  }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .card-accent { border-color: var(--border); }
+  .card h3 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card h3 .badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: rgba(200,245,66,0.12);
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .card p { color: var(--text-muted); font-size: 13px; line-height: 1.65; }
+
+  /* TAG */
+  .tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 3px 9px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    margin: 2px;
+  }
+  .tag-green { background: rgba(200,245,66,0.12); color: var(--accent); }
+  .tag-blue { background: rgba(66,228,245,0.12); color: var(--accent2); }
+  .tag-orange { background: rgba(245,166,35,0.12); color: var(--accent3); }
+  .tag-red { background: rgba(255,71,87,0.12); color: var(--danger); }
+
+  /* STAT BOX */
+  .stat-box {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+  .stat-box .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-box .stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+  .stat-box .stat-detail {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border2);
+  }
+
+  /* ISSUE TREE */
+  .issue-tree {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 32px;
+  }
+  .tree-root {
+    background: var(--accent);
+    color: #000;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 13px;
+    display: inline-block;
+  }
+  .tree-level1 { margin-top: 24px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; position: relative; }
+  .tree-level1::before {
+    content: '';
+    position: absolute;
+    top: -12px; left: 16.5%; right: 16.5%;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.3;
+  }
+  .tree-l1-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    position: relative;
+  }
+  .tree-l1-item::before {
+    content: '';
+    position: absolute;
+    top: -13px; left: 50%;
+    width: 1px; height: 13px;
+    background: rgba(200,245,66,0.3);
+  }
+  .tree-l2 { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+  .tree-l2-item {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .tree-l2-item.key { border-color: rgba(200,245,66,0.3); color: var(--text); }
+
+  /* FIVE FORCES */
+  .forces-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 16px;
+  }
+  .force-center {
+    grid-column: 2; grid-row: 2;
+    background: var(--accent);
+    color: #000;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .force-center h4 { font-size: 13px; font-weight: 900; }
+  .force-item {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .force-item h4 {
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+  .force-item p { font-size: 11px; color: var(--text-muted); line-height: 1.6; }
+  .force-level {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .force-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--border2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .force-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--accent);
+  }
+  .force-bar-fill.med { background: var(--accent3); }
+  .force-bar-fill.low { background: var(--accent2); }
+  .force-num { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); }
+
+  /* VALUE CHAIN */
+  .value-chain {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+  .vc-step {
+    flex: 1;
+    min-width: 150px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    padding: 20px 16px;
+    position: relative;
+  }
+  .vc-step:first-child { border-radius: 12px 0 0 12px; }
+  .vc-step:last-child { border-radius: 0 12px 12px 0; }
+  .vc-step.highlight {
+    background: rgba(200,245,66,0.08);
+    border-color: var(--border);
+  }
+  .vc-step::after {
+    content: '→';
+    position: absolute;
+    right: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 16px;
+    z-index: 2;
+  }
+  .vc-step:last-child::after { display: none; }
+  .vc-step h5 {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .vc-step p {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .vc-step .vc-note {
+    font-size: 10px;
+    color: var(--accent);
+    margin-top: 6px;
+    font-weight: 400;
+  }
+
+  /* 3 HORIZONS */
+  .horizons {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border2);
+  }
+  .horizon {
+    padding: 28px 24px;
+    border-right: 1px solid var(--border2);
+  }
+  .horizon:last-child { border-right: none; }
+  .horizon.h1 { background: rgba(200,245,66,0.08); }
+  .horizon.h2 { background: rgba(66,228,245,0.05); }
+  .horizon.h3 { background: rgba(245,166,35,0.05); }
+  .horizon-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 60px;
+    opacity: 0.2;
+    line-height: 1;
+  }
+  .horizon.h1 .horizon-num { color: var(--accent); }
+  .horizon.h2 .horizon-num { color: var(--accent2); }
+  .horizon.h3 .horizon-num { color: var(--accent3); }
+  .horizon h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .horizon .timeline {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 16px;
+  }
+  .horizon.h1 .timeline { background: rgba(200,245,66,0.15); color: var(--accent); }
+  .horizon.h2 .timeline { background: rgba(66,228,245,0.15); color: var(--accent2); }
+  .horizon.h3 .timeline { background: rgba(245,166,35,0.15); color: var(--accent3); }
+  .horizon ul { list-style: none; padding: 0; }
+  .horizon ul li {
+    font-size: 12px;
+    color: var(--text-muted);
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .horizon ul li::before { content: '—'; color: var(--text-muted); flex-shrink: 0; }
+
+  /* KPI TABLE */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th {
+    background: var(--surface2);
+    padding: 12px 16px;
+    text-align: left;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border2);
+    color: var(--text-muted);
+  }
+  td:first-child { color: var(--text); font-weight: 500; }
+  tr:last-child td { border-bottom: none; }
+
+  /* SWOT */
+  .swot {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 16px;
+  }
+  .swot-item {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .swot-item.s { border-color: rgba(200,245,66,0.2); }
+  .swot-item.w { border-color: rgba(255,71,87,0.2); }
+  .swot-item.o { border-color: rgba(66,228,245,0.2); }
+  .swot-item.t { border-color: rgba(245,166,35,0.2); }
+  .swot-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .swot-item.s .swot-label { color: var(--accent); }
+  .swot-item.w .swot-label { color: var(--danger); }
+  .swot-item.o .swot-label { color: var(--accent2); }
+  .swot-item.t .swot-label { color: var(--accent3); }
+  .swot-item ul { list-style: none; padding: 0; }
+  .swot-item ul li {
+    font-size: 12px;
+    color: var(--text-muted);
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex; gap: 8px;
+  }
+  .swot-item ul li::before { content: '·'; flex-shrink: 0; }
+
+  /* PROPOSAL */
+  .proposal-step {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border2);
+  }
+  .proposal-step:last-child { border-bottom: none; margin-bottom: 0; }
+  .step-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    color: rgba(200,245,66,0.15);
+    line-height: 1;
+    flex-shrink: 0;
+    width: 60px;
+    text-align: right;
+  }
+  .step-content h4 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--accent);
+  }
+  .step-content p { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; }
+  .step-content .action-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .step-content .action-list li {
+    font-size: 12px;
+    background: var(--surface2);
+    padding: 8px 12px;
+    border-radius: 6px;
+    border-left: 2px solid var(--accent);
+    color: var(--text);
+  }
+
+  /* BCG RAZOR BLADES */
+  .razor-blades {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 32px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 24px;
+    align-items: center;
+  }
+  .rb-box {
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+  }
+  .rb-box h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .rb-box p { font-size: 12px; color: var(--text-muted); }
+  .rb-arrow {
+    text-align: center;
+    color: var(--accent);
+    font-size: 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .rb-arrow span {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  /* COMPETITIVE */
+  .comp-row {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 0;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border2);
+    align-items: center;
+    font-size: 12px;
+  }
+  .comp-row:first-child {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: var(--surface2);
+    font-weight: 400;
+    padding: 10px 16px;
+  }
+  .comp-row.lynkable {
+    background: rgba(200,245,66,0.05);
+    border-left: 3px solid var(--accent);
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .dot.y { background: var(--accent); }
+  .dot.n { background: rgba(255,71,87,0.5); }
+  .dot.p { background: var(--accent3); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: var(--border2);
+    margin: 32px 0;
+  }
+
+  /* INSIGHT BOX */
+  .insight {
+    background: rgba(200,245,66,0.06);
+    border: 1px solid rgba(200,245,66,0.2);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+  .insight-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .insight p { font-size: 13px; color: var(--text); font-weight: 500; }
+
+  .mb-24 { margin-bottom: 24px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-24 { margin-top: 24px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-label">■ MBB 전략 분석 보고서 · Lynkable × 휴게소 식자재 3PL</div>
+  <h1>HIGHWAY<br>ROBOT FOOD<br>STRATEGY</h1>
+  <div class="header-sub">맥킨지·BCG·베인 프레임워크 기반 — 휴게소 자동조리 식자재 유통 전략</div>
+  <div class="header-meta">
+    <div class="meta-item">
+      <div class="meta-label">분석 깊이</div>
+      <div class="meta-value">Lv.10 / 10</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">타겟 시장</div>
+      <div class="meta-value">전국 208개 휴게소</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">핵심 거래처</div>
+      <div class="meta-value">주식회사 범화 + 휴게소 운영사</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">전략 기간</div>
+      <div class="meta-value">0~24개월</div>
+    </div>
+  </div>
+</div>
+
+<div class="nav">
+  <div class="nav-item active" onclick="showSection('market')">01 시장 현황</div>
+  <div class="nav-item" onclick="showSection('framework')">02 MBB 프레임워크</div>
+  <div class="nav-item" onclick="showSection('competitive')">03 경쟁 구도</div>
+  <div class="nav-item" onclick="showSection('strategy')">04 핵심 전략</div>
+  <div class="nav-item" onclick="showSection('proposal')">05 제안 실행</div>
+  <div class="nav-item" onclick="showSection('kpi')">06 KPI & 로드맵</div>
+</div>
+
+<div class="main">
+
+  <!-- ===== SECTION 01: MARKET ===== -->
+  <div id="section-market" class="section active">
+    <div class="section-title">
+      <div class="section-num">01</div>
+      <div class="section-text">
+        <h2>시장 현황 진단</h2>
+        <p>McKinsey MECE 구조 기반 외부 환경 스캔 — 데이터 기반 시장 기회 정량화</p>
+      </div>
+    </div>
+
+    <div class="grid-4 mb-24">
+      <div class="stat-box">
+        <div class="stat-num">103</div>
+        <div class="stat-label">2025년 휴게소 조리로봇 도입 매장</div>
+        <div class="stat-detail">2021년 3개 → 34배 성장. 2024년부터 라면·우동 등 음식조리 본격화</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">2.8억</div>
+        <div class="stat-label">음식류 로봇 매장 연평균 매출</div>
+        <div class="stat-detail">전국 15개 매장 총 42억원 이상. 로봇 1대당 경제성 검증 완료</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">208</div>
+        <div class="stat-label">전국 고속도로 휴게소 (2024년)</div>
+        <div class="stat-detail">상위 10개소 총 매출 2,471억원. 2026년까지 개방형 전환 확대 예정</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">21.5%</div>
+        <div class="stat-label">휴게소 상위 10개 3년간 매출 성장</div>
+        <div class="stat-detail">2020→2023년. 인건비 상승 + 구인난으로 로봇 자동화 수요 구조적 증가</div>
+      </div>
+    </div>
+
+    <div class="insight mb-24">
+      <div class="insight-label">McKinsey Market Sizing Insight</div>
+      <p>2025년 기준 음식류 조리로봇 매장 15개소 × 식자재 원가율 30~35% 적용 시, 연간 식자재 시장 규모 약 13~15억원. 향후 3년간 로봇 도입 100개소 전제 시 잠재 시장 90~100억원 규모.</p>
+    </div>
+
+    <div class="grid-2 mb-24">
+      <div class="card">
+        <h3>구조적 수요 드라이버 <span class="badge">Macro</span></h3>
+        <ul style="list-style:none;padding:0;">
+          <li style="padding:8px 0;border-bottom:1px solid var(--border2);font-size:12px;color:var(--text-muted);">⬆ <strong style="color:var(--text)">인건비 지속 상승</strong> — 최저임금 인상 기조, 휴게소 야간 인력 구인난 심화</li>
+          <li style="padding:8px 0;border-bottom:1px solid var(--border2);font-size:12px;color:var(--text-muted);">⬆ <strong style="color:var(--text)">24시간 운영 수요</strong> — 로봇 도입 후 야간 운영 가능 → 운영 수익 직접 증가</li>
+          <li style="padding:8px 0;border-bottom:1px solid var(--border2);font-size:12px;color:var(--text-muted);">⬆ <strong style="color:var(--text)">정부 로봇 보급 정책</strong> — 2030년까지 서비스 분야 30만대 보급 목표</li>
+          <li style="padding:8px 0;font-size:12px;color:var(--text-muted);">⬆ <strong style="color:var(--text)">품질 균일성 요구</strong> — 들쑥날쑥한 조리 품질 문제 → 로봇+전용 식자재 패키지 솔루션</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>산업 구조 변화 <span class="badge">Structure</span></h3>
+        <ul style="list-style:none;padding:0;">
+          <li style="padding:8px 0;border-bottom:1px solid var(--border2);font-size:12px;color:var(--text-muted);">🤖 <strong style="color:var(--text)">로봇 제조사</strong> — 한화로보틱스, 범화, 풀무원 계열 등 로봇 공급 경쟁 심화</li>
+          <li style="padding:8px 0;border-bottom:1px solid var(--border2);font-size:12px;color:var(--text-muted);">🏪 <strong style="color:var(--text)">휴게소 운영사</strong> — 아워홈, 풀무원푸드앤컬처 등 식자재 납품 + 운영 통합 모델 추진</li>
+          <li style="padding:8px 0;border-bottom:1px solid var(--border2);font-size:12px;color:var(--text-muted);">🔗 <strong style="color:var(--text)">공급망 분리 기회</strong> — 로봇 제조와 식자재 공급 분업화 → 링크어블의 포지셔닝 공간</li>
+          <li style="padding:8px 0;font-size:12px;color:var(--text-muted);">📦 <strong style="color:var(--text)">전용 식자재 표준화</strong> — 로봇 규격에 최적화된 식자재 없음 → 선점 기회</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>가치사슬 포지셔닝 맵 <span class="badge">BCG Value Chain</span></h3>
+      <div style="margin-top:16px;">
+        <div class="value-chain">
+          <div class="vc-step">
+            <h5>소스·식재 제조</h5>
+            <p>OEM 파트너<br>(소스·계란블럭)</p>
+            <div class="vc-note">링크어블이 스펙 지정</div>
+          </div>
+          <div class="vc-step highlight">
+            <h5>3PL 유통 ★</h5>
+            <p><strong>링크어블</strong><br>Lynkable</p>
+            <div class="vc-note">핵심 포지션 — 선점 가능</div>
+          </div>
+          <div class="vc-step">
+            <h5>로봇 제조</h5>
+            <p>주식회사 범화</p>
+            <div class="vc-note">전략적 파트너</div>
+          </div>
+          <div class="vc-step">
+            <h5>휴게소 설치</h5>
+            <p>범화/링크어블<br>번들 제안</p>
+            <div class="vc-note">결합 제안 필요</div>
+          </div>
+          <div class="vc-step">
+            <h5>휴게소 운영</h5>
+            <p>각 휴게소<br>운영사</p>
+            <div class="vc-note">최종 고객</div>
+          </div>
+          <div class="vc-step">
+            <h5>소비자</h5>
+            <p>고속도로<br>이용객</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 02: FRAMEWORKS ===== -->
+  <div id="section-framework" class="section">
+    <div class="section-title">
+      <div class="section-num">02</div>
+      <div class="section-text">
+        <h2>MBB 프레임워크 적용</h2>
+        <p>McKinsey Issue Tree · BCG Razor-Blades · Bain Win · Porter's Five Forces</p>
+      </div>
+    </div>
+
+    <!-- Issue Tree -->
+    <div class="mb-24">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:12px;">McKinsey — MECE Issue Tree</div>
+      <div class="issue-tree">
+        <div style="text-align:center;">
+          <div class="tree-root">❓ 링크어블이 휴게소 식자재 3PL 사업을 수주하고 지속 성장할 수 있는가?</div>
+        </div>
+        <div class="tree-level1">
+          <div class="tree-l1-item">
+            Is 시장 기회가 충분한가?
+            <div class="tree-l2">
+              <div class="tree-l2-item key">✓ 로봇 도입 34배 성장 (검증)</div>
+              <div class="tree-l2-item key">✓ 전용 식자재 공급처 부재</div>
+              <div class="tree-l2-item">향후 3년간 100+ 매장 예상</div>
+            </div>
+          </div>
+          <div class="tree-l1-item">
+            Is 링크어블이 이길 수 있는가?
+            <div class="tree-l2">
+              <div class="tree-l2-item key">✓ 범화 독점 접점 보유</div>
+              <div class="tree-l2-item key">✓ 전용 소스·블럭 개발 완료</div>
+              <div class="tree-l2-item">경쟁사 대비 전환비용 우위</div>
+            </div>
+          </div>
+          <div class="tree-l1-item">
+            Is 사업이 지속 가능한가?
+            <div class="tree-l2">
+              <div class="tree-l2-item">재발주 구조 (반복 수익)</div>
+              <div class="tree-l2-item">로봇 확산 = 식자재 수요 증가</div>
+              <div class="tree-l2-item key">⚠ 진입장벽 구축이 핵심</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="insight mt-16">
+        <div class="insight-label">Issue Tree 결론</div>
+        <p>세 질문 모두 Yes 가능 — 단, "이길 수 있는가"의 핵심은 범화와의 관계를 <strong>독점적 공급 계약</strong>으로 공식화하는 속도에 달림.</p>
+      </div>
+    </div>
+
+    <!-- Five Forces -->
+    <div class="mb-24">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:12px;">Porter's Five Forces — 링크어블 관점</div>
+      <div class="forces-grid">
+        <div class="force-item" style="grid-column:2;grid-row:1;">
+          <h4>🔼 신규 진입 위협</h4>
+          <p>대형 식자재 유통사(CJ프레시웨이, 아워홈)가 진입 가능. 단, 범화 로봇 전용 규격 소스/블럭은 링크어블이 선점</p>
+          <div class="force-level">
+            <div class="force-bar"><div class="force-bar-fill med" style="width:55%"></div></div>
+            <div class="force-num">중간</div>
+          </div>
+        </div>
+        <div class="force-item" style="grid-column:1;grid-row:2;">
+          <h4>◀ 공급자 교섭력</h4>
+          <p>링크어블이 직접 소스·블럭 스펙 개발. OEM 파트너 다변화 가능. 공급자 교섭력 약함</p>
+          <div class="force-level">
+            <div class="force-bar"><div class="force-bar-fill low" style="width:25%"></div></div>
+            <div class="force-num">낮음</div>
+          </div>
+        </div>
+        <div class="force-center">
+          <h4>링크어블<br>휴게소 식자재<br>3PL</h4>
+        </div>
+        <div class="force-item" style="grid-column:3;grid-row:2;">
+          <h4>▶ 구매자 교섭력</h4>
+          <p>초기: 휴게소가 협상 우위. 범화 로봇 도입 후: 전환비용 발생으로 구매자 교섭력 약화. 파일럿 후 점진적 유리</p>
+          <div class="force-level">
+            <div class="force-bar"><div class="force-bar-fill med" style="width:60%"></div></div>
+            <div class="force-num">중간→낮음</div>
+          </div>
+        </div>
+        <div class="force-item" style="grid-column:2;grid-row:3;">
+          <h4>🔽 대체재 위협</h4>
+          <p>시중 라면 + 일반 계란으로 대체 가능. 단, 로봇 전용 규격 + 맛 차별화로 대체재 위협 최소화 필요</p>
+          <div class="force-level">
+            <div class="force-bar"><div class="force-bar-fill med" style="width:45%"></div></div>
+            <div class="force-num">중간</div>
+          </div>
+        </div>
+        <div class="force-item" style="grid-column:1;grid-row:1;">
+          <h4>⚡ 기존 경쟁 강도</h4>
+          <p>현재 범화 로봇 전용 식자재 공급사 없음. 초기 시장 → 경쟁 강도 낮음. 아직 블루오션</p>
+          <div class="force-level">
+            <div class="force-bar"><div class="force-bar-fill low" style="width:20%"></div></div>
+            <div class="force-num">낮음 (기회)</div>
+          </div>
+        </div>
+        <div class="force-item" style="grid-column:3;grid-row:1;"></div>
+        <div class="force-item" style="grid-column:1;grid-row:3;visibility:hidden;"></div>
+        <div class="force-item" style="grid-column:3;grid-row:3;visibility:hidden;"></div>
+      </div>
+    </div>
+
+    <!-- Razor Blades -->
+    <div class="mb-24">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:12px;">BCG — Razor & Blades 비즈니스 모델</div>
+      <div class="razor-blades">
+        <div class="rb-box" style="background:rgba(66,228,245,0.08);border:1px solid rgba(66,228,245,0.2);">
+          <h4 style="color:var(--accent2);">🔧 RAZOR (면도기)</h4>
+          <p style="color:var(--text-muted);font-size:12px;margin-top:8px;">주식회사 범화의<br><strong style="color:var(--text)">라면조리 로봇</strong><br><br>휴게소에 1회 설치<br>하드웨어 수익 모델</p>
+          <div style="margin-top:16px;padding:8px;background:rgba(66,228,245,0.1);border-radius:6px;font-size:11px;color:var(--accent2);">범화의 사업 영역</div>
+        </div>
+        <div class="rb-arrow">
+          <div style="font-size:32px;">⟷</div>
+          <span>전략적<br>번들링</span>
+          <div style="margin-top:16px;padding:8px 12px;background:rgba(200,245,66,0.1);border:1px solid var(--border);border-radius:6px;text-align:center;">
+            <div style="font-size:10px;color:var(--accent);font-family:'DM Mono',monospace;letter-spacing:1px;">BCG INSIGHT</div>
+            <div style="font-size:11px;color:var(--text);margin-top:4px;">면도기가 팔릴수록<br>블레이드 수요 증가</div>
+          </div>
+        </div>
+        <div class="rb-box" style="background:rgba(200,245,66,0.08);border:1px solid rgba(200,245,66,0.2);">
+          <h4 style="color:var(--accent);">💊 BLADES (면도날)</h4>
+          <p style="color:var(--text-muted);font-size:12px;margin-top:8px;"><strong style="color:var(--text)">링크어블의<br>전용 식자재</strong><br><br>라면 액상소스 + 계란블럭<br>매월 정기 반복 납품</p>
+          <div style="margin-top:16px;padding:8px;background:rgba(200,245,66,0.1);border-radius:6px;font-size:11px;color:var(--accent);">링크어블의 반복 수익</div>
+        </div>
+      </div>
+      <div class="insight mt-16">
+        <div class="insight-label">BCG Strategic Logic</div>
+        <p>범화 로봇이 설치된 모든 매장은 링크어블의 잠재 고객. 범화의 영업력이 링크어블의 유통 채널을 자동으로 확장하는 구조. 범화와의 계약이 곧 링크어블의 경쟁 해자.</p>
+      </div>
+    </div>
+
+    <!-- SWOT -->
+    <div>
+      <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:12px;">Bain — SWOT 기반 전략 방향 도출</div>
+      <div class="swot">
+        <div class="swot-item s">
+          <div class="swot-label">S</div>
+          <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:12px;">강점 Strengths</div>
+          <ul>
+            <li>범화와의 선발 파트너십 — 유일한 접점</li>
+            <li>전용 소스 개발 완료 — 즉시 공급 가능</li>
+            <li>계란블럭 업그레이드 — 맛·보관 차별화</li>
+            <li>로봇 비즈니스 이해도 — 기술적 공감대</li>
+            <li>스타트업 민첩성 — 빠른 의사결정</li>
+          </ul>
+        </div>
+        <div class="swot-item w">
+          <div class="swot-label">W</div>
+          <div style="font-size:12px;font-weight:700;color:var(--danger);margin-bottom:12px;">약점 Weaknesses</div>
+          <ul>
+            <li>브랜드 인지도 없음 — 식자재 유통 신입</li>
+            <li>대규모 물류 인프라 미보유</li>
+            <li>식품 인증/위생 체계 구축 필요</li>
+            <li>레퍼런스(납품 실적) 부재</li>
+            <li>소규모 자본 — 대량 선주문 한계</li>
+          </ul>
+        </div>
+        <div class="swot-item o">
+          <div class="swot-label">O</div>
+          <div style="font-size:12px;font-weight:700;color:var(--accent2);margin-bottom:12px;">기회 Opportunities</div>
+          <ul>
+            <li>로봇 도입 가속 — 2030년까지 300% 성장 예상</li>
+            <li>전용 식자재 공급사 부재 — 블루오션</li>
+            <li>정부 보조금 — 로봇 도입 지원 정책</li>
+            <li>개방형 휴게소 확대 — 신규 매장 증가</li>
+            <li>타 로봇 제조사 확장 가능성</li>
+          </ul>
+        </div>
+        <div class="swot-item t">
+          <div class="swot-label">T</div>
+          <div style="font-size:12px;font-weight:700;color:var(--accent3);margin-bottom:12px;">위협 Threats</div>
+          <ul>
+            <li>아워홈/CJ프레시웨이 등 대형 유통사 진입</li>
+            <li>한화로보틱스 — 직접 식자재 패키지화 가능</li>
+            <li>범화의 식자재 사업 내재화 가능성</li>
+            <li>식품위생 규제 리스크</li>
+            <li>휴게소 운영사의 직납 시도</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 03: COMPETITIVE ===== -->
+  <div id="section-competitive" class="section">
+    <div class="section-title">
+      <div class="section-num">03</div>
+      <div class="section-text">
+        <h2>경쟁 구도 분석</h2>
+        <p>Bain Win-Loss Analysis — 링크어블이 이기는 이유와 이겨야 하는 이유</p>
+      </div>
+    </div>
+
+    <div style="background:var(--surface);border:1px solid var(--border2);border-radius:12px;overflow:hidden;margin-bottom:24px;">
+      <div class="comp-row">
+        <div>공급사</div><div>로봇 전용 스펙</div><div>범화 관계</div><div>전용소스</div><div>계란블럭</div><div>속도</div>
+      </div>
+      <div class="comp-row lynkable">
+        <div><strong style="color:var(--accent)">🏆 링크어블 (당사)</strong></div>
+        <div><span class="dot y"></span> 보유</div>
+        <div><span class="dot y"></span> 파트너</div>
+        <div><span class="dot y"></span> 개발완료</div>
+        <div><span class="dot y"></span> 개발완료</div>
+        <div><span class="dot y"></span> 즉시</div>
+      </div>
+      <div class="comp-row">
+        <div>아워홈</div>
+        <div><span class="dot n"></span> 없음</div>
+        <div><span class="dot n"></span> 없음</div>
+        <div><span class="dot p"></span> 개발가능</div>
+        <div><span class="dot p"></span> 기성품</div>
+        <div><span class="dot p"></span> 6~12개월</div>
+      </div>
+      <div class="comp-row">
+        <div>CJ프레시웨이</div>
+        <div><span class="dot n"></span> 없음</div>
+        <div><span class="dot n"></span> 없음</div>
+        <div><span class="dot p"></span> 개발가능</div>
+        <div><span class="dot p"></span> 기성품</div>
+        <div><span class="dot p"></span> 6~12개월</div>
+      </div>
+      <div class="comp-row">
+        <div>한화로보틱스 내재화</div>
+        <div><span class="dot y"></span> 자체</div>
+        <div><span class="dot n"></span> 경쟁</div>
+        <div><span class="dot p"></span> 개발가능</div>
+        <div><span class="dot n"></span> 없음</div>
+        <div><span class="dot p"></span> 미정</div>
+      </div>
+      <div class="comp-row">
+        <div>풀무원 로봇셰프</div>
+        <div><span class="dot y"></span> 자체기기</div>
+        <div><span class="dot n"></span> 없음</div>
+        <div><span class="dot y"></span> 자체</div>
+        <div><span class="dot n"></span> 없음</div>
+        <div><span class="dot n"></span> 폐쇄형</div>
+      </div>
+    </div>
+
+    <div class="insight mb-24">
+      <div class="insight-label">Bain Competitive Advantage</div>
+      <p>현재 시점에서 링크어블은 <strong>범화 전용 스펙 + 즉시 공급 가능한 소스·계란블럭</strong>이라는 유일한 조건을 갖추고 있음. 경쟁사가 따라오는 데 6~12개월 소요 — 이 윈도우를 활용해 범화와 독점 or 우선공급 계약 체결이 전략적 최우선순위.</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>링크어블의 해자(Moat) 구축 방법 <span class="badge">Bain</span></h3>
+        <ul style="list-style:none;padding:0;">
+          <li style="padding:10px 0;border-bottom:1px solid var(--border2);font-size:12px;">
+            <div style="color:var(--accent);font-weight:700;margin-bottom:4px;">① 계약적 해자</div>
+            <div style="color:var(--text-muted);">범화와 전용 식자재 우선공급 계약 (독점 or 지정공급사 조항)</div>
+          </li>
+          <li style="padding:10px 0;border-bottom:1px solid var(--border2);font-size:12px;">
+            <div style="color:var(--accent);font-weight:700;margin-bottom:4px;">② 기술적 해자</div>
+            <div style="color:var(--text-muted);">범화 로봇 내부 규격(용량, 패키지 크기)에 맞게 소스·블럭 설계 → 타 제품 호환 불가</div>
+          </li>
+          <li style="padding:10px 0;border-bottom:1px solid var(--border2);font-size:12px;">
+            <div style="color:var(--accent);font-weight:700;margin-bottom:4px;">③ 관계적 해자</div>
+            <div style="color:var(--text-muted);">범화 영업팀과 공동 제안 → 휴게소 수주 시 항상 식자재 패키지 포함</div>
+          </li>
+          <li style="padding:10px 0;font-size:12px;">
+            <div style="color:var(--accent);font-weight:700;margin-bottom:4px;">④ 데이터 해자</div>
+            <div style="color:var(--text-muted);">파일럿 운영 데이터(매출, 소비율, 재고) 축적 → 납품 최적화로 전환비용 증가</div>
+          </li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>리스크 시나리오 대응 <span class="badge">McKinsey</span></h3>
+        <ul style="list-style:none;padding:0;">
+          <li style="padding:10px 0;border-bottom:1px solid var(--border2);font-size:12px;">
+            <div style="color:var(--danger);font-weight:700;margin-bottom:4px;">⚠ 범화가 식자재 내재화</div>
+            <div style="color:var(--text-muted);">대응: 범화에게 유통 외주가 이익임을 수치로 증명. 마진 쉐어 구조 제안</div>
+          </li>
+          <li style="padding:10px 0;border-bottom:1px solid var(--border2);font-size:12px;">
+            <div style="color:var(--danger);font-weight:700;margin-bottom:4px;">⚠ 대형 유통사 진입</div>
+            <div style="color:var(--text-muted);">대응: 먼저 5개 이상 레퍼런스 확보 후 브랜드화. 전환비용을 높여 이탈 방지</div>
+          </li>
+          <li style="padding:10px 0;border-bottom:1px solid var(--border2);font-size:12px;">
+            <div style="color:var(--danger);font-weight:700;margin-bottom:4px;">⚠ 휴게소 가격 협상</div>
+            <div style="color:var(--text-muted);">대응: 원가절감 + 맛 데이터(고객 만족도)로 프리미엄 정당화. 소스 브랜드화</div>
+          </li>
+          <li style="padding:10px 0;font-size:12px;">
+            <div style="color:var(--danger);font-weight:700;margin-bottom:4px;">⚠ 범화 로봇 확산 둔화</div>
+            <div style="color:var(--text-muted);">대응: 한화로보틱스 등 타 로봇 제조사 접촉. 범화 의존도 분산 필요</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 04: STRATEGY ===== -->
+  <div id="section-strategy" class="section">
+    <div class="section-title">
+      <div class="section-num">04</div>
+      <div class="section-text">
+        <h2>핵심 전략 수립</h2>
+        <p>McKinsey 3 Horizons + BCG Growth Matrix — 단계별 전략 로드맵</p>
+      </div>
+    </div>
+
+    <div class="insight mb-24">
+      <div class="insight-label">One-Line Strategy (McKinsey Pyramid)</div>
+      <p><strong>범화 로봇을 레버리지로 삼아, 전용 소스·계란블럭의 독점적 공급사로 포지셔닝하고, 로봇 확산 속도에 올라탄 반복 수익 구조를 구축한다.</strong></p>
+    </div>
+
+    <div class="horizons mb-24">
+      <div class="horizon h1">
+        <div class="horizon-num">H1</div>
+        <h4>거점 확보</h4>
+        <div class="timeline">0 — 6개월</div>
+        <ul>
+          <li>범화 공식 우선공급 MOU 체결</li>
+          <li>파일럿 휴게소 1~2곳 수주</li>
+          <li>소스·계란블럭 식품 인증 완료</li>
+          <li>공급 프로세스 (발주→납품) 구축</li>
+          <li>단가·마진 구조 확정</li>
+          <li>첫 납품 후 데이터 수집 시작</li>
+        </ul>
+      </div>
+      <div class="horizon h2">
+        <div class="horizon-num">H2</div>
+        <h4>확장 가속</h4>
+        <div class="timeline">6 — 18개월</div>
+        <ul>
+          <li>범화 로봇 도입 전체 사이트 납품</li>
+          <li>식자재 브랜드화 (LYNK 또는 서브브랜드)</li>
+          <li>메뉴 다양화 — 우동 소스, 국물 소스 추가</li>
+          <li>3PL 물류 인프라 정비 (콜드체인)</li>
+          <li>매출·재고 자동화 데이터 시스템</li>
+          <li>2번째 로봇 제조사 관계 구축</li>
+        </ul>
+      </div>
+      <div class="horizon h3">
+        <div class="horizon-num">H3</div>
+        <h4>플랫폼화</h4>
+        <div class="timeline">18 — 36개월</div>
+        <ul>
+          <li>타 로봇 제조사(한화 등) 식자재 공급</li>
+          <li>자체 식자재 라인업 확장</li>
+          <li>휴게소 외 — 학교급식, 병원, 프랜차이즈</li>
+          <li>식자재 구독(정기납품) 플랫폼</li>
+          <li>로봇 식자재 B2B 마켓플레이스</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="grid-2 mb-24">
+      <div class="card card-accent">
+        <h3>전략 1: 번들 패키지 제안 <span class="badge">핵심</span></h3>
+        <p style="margin-bottom:12px;">범화 로봇 도입 제안서에 링크어블 식자재 패키지를 번들로 포함시키는 구조. 휴게소는 로봇 + 식자재를 원스톱으로 해결.</p>
+        <div style="background:var(--surface2);border-radius:8px;padding:12px;font-size:12px;">
+          <div style="color:var(--accent);font-weight:700;margin-bottom:8px;">번들 제안 구조</div>
+          <div style="color:var(--text-muted);">범화 로봇 설치 계약 체결<br>→ 링크어블 전용 식자재 공급 계약 자동 포함<br>→ 월 정기 납품 + 재발주 자동화<br>→ 로봇 유지보수 + 식자재 品질 보증 연계</div>
+        </div>
+      </div>
+      <div class="card card-accent">
+        <h3>전략 2: 전용 소스 IP 브랜드화 <span class="badge">차별화</span></h3>
+        <p style="margin-bottom:12px;">단순 유통이 아닌 링크어블만의 소스 브랜드 구축. 휴게소 라면의 맛 균일성을 링크어블 소스로 보장하는 서사 생성.</p>
+        <div style="background:var(--surface2);border-radius:8px;padding:12px;font-size:12px;">
+          <div style="color:var(--accent);font-weight:700;margin-bottom:8px;">브랜드 전략 방향</div>
+          <div style="color:var(--text-muted);">"링크어블 전용 라멘 베이스" 브랜드<br>→ 기존 시판 대비 맛 업그레이드 스토리<br>→ 휴게소 라면 = 프리미엄 포지셔닝 지원<br>→ 소비자 반응 데이터로 B2B 설득력 강화</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>전략 3: 파일럿-퍼스트 접근법 <span class="badge">McKinsey</span></h3>
+        <p style="margin-bottom:12px;">1개 휴게소 파일럿으로 수치 증명 후 확산. 불확실성이 높은 B2B 수주 시 가장 강력한 설득 도구는 '이미 돌아가고 있는 레퍼런스'.</p>
+        <div style="font-size:12px;color:var(--text-muted);display:flex;flex-direction:column;gap:6px;margin-top:8px;">
+          <div style="background:var(--surface2);padding:8px 10px;border-radius:6px;border-left:2px solid var(--accent2);">파일럿 사이트 목표 지표: 월 납품량, 재고 소진율, 고객 만족도, 단가 적정성</div>
+          <div style="background:var(--surface2);padding:8px 10px;border-radius:6px;border-left:2px solid var(--accent2);">3개월 데이터 확보 후 → 범화 전체 사이트 제안에 활용</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>전략 4: 가격 전략 (BCG) <span class="badge">수익</span></h3>
+        <p style="margin-bottom:12px;">초기 파일럿에서는 원가 + 소폭 마진으로 진입. 레퍼런스 확보 후 점진적 프리미엄 전환. 대형 유통사 대비 민첩한 가격 대응이 강점.</p>
+        <div style="font-size:12px;color:var(--text-muted);display:flex;flex-direction:column;gap:6px;margin-top:8px;">
+          <div style="background:var(--surface2);padding:8px 10px;border-radius:6px;border-left:2px solid var(--accent3);">Phase 1: 경쟁적 가격 → 진입 및 레퍼런스 확보</div>
+          <div style="background:var(--surface2);padding:8px 10px;border-radius:6px;border-left:2px solid var(--accent3);">Phase 2: 맛 차별화 데이터로 프리미엄 5~10% 적용</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 05: PROPOSAL ===== -->
+  <div id="section-proposal" class="section">
+    <div class="section-title">
+      <div class="section-num">05</div>
+      <div class="section-text">
+        <h2>제안 실행 플레이북</h2>
+        <p>Bain Sales Excellence + McKinsey Pyramid Principle — 수주까지의 구체적 행동</p>
+      </div>
+    </div>
+
+    <div class="card mb-24">
+      <h3>제안 타겟 우선순위 매트릭스 <span class="badge">Bain</span></h3>
+      <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+        <div style="background:rgba(200,245,66,0.08);border:1px solid rgba(200,245,66,0.2);border-radius:8px;padding:16px;">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--accent);margin-bottom:8px;">우선순위 1 — 즉시</div>
+          <div style="font-weight:700;font-size:14px;margin-bottom:8px;">범화 공동 제안</div>
+          <div style="font-size:11px;color:var(--text-muted);">범화가 로봇 영업 중인 휴게소에 식자재 패키지 번들로 동행. 범화의 신뢰도 활용</div>
+        </div>
+        <div style="background:rgba(66,228,245,0.06);border:1px solid rgba(66,228,245,0.15);border-radius:8px;padding:16px;">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--accent2);margin-bottom:8px;">우선순위 2 — 1~3개월</div>
+          <div style="font-weight:700;font-size:14px;margin-bottom:8px;">기존 로봇 설치 사이트</div>
+          <div style="font-size:11px;color:var(--text-muted);">현재 범화 로봇이 이미 설치된 사이트에 기존 식자재 교체 제안. 맛 업그레이드 포인트</div>
+        </div>
+        <div style="background:rgba(245,166,35,0.05);border:1px solid rgba(245,166,35,0.15);border-radius:8px;padding:16px;">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--accent3);margin-bottom:8px;">우선순위 3 — 3~6개월</div>
+          <div style="font-weight:700;font-size:14px;margin-bottom:8px;">타 운영사 독자 제안</div>
+          <div style="font-size:11px;color:var(--text-muted);">레퍼런스 확보 후 한화로보틱스 도입 사이트 등 독자 접근. 식자재 단독 공급사로 포지셔닝</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-24">
+      <h3>제안서 구조 (McKinsey Pyramid Principle) <span class="badge">Proposal</span></h3>
+      <div style="margin-top:16px;display:flex;flex-direction:column;gap:0;">
+        <div style="background:var(--accent);color:#000;padding:12px 20px;border-radius:8px 8px 0 0;font-weight:700;font-size:13px;text-align:center;">
+          💡 Executive Summary: "링크어블 전용 식자재로 귀사 로봇의 맛 경쟁력 + 운영 효율을 동시에 높입니다"
+        </div>
+        <div style="background:rgba(200,245,66,0.06);border:1px solid rgba(200,245,66,0.2);border:1px solid rgba(200,245,66,0.2);padding:12px 20px;font-size:12px;">
+          <strong style="color:var(--accent);">Why Now:</strong> <span style="color:var(--text-muted);">휴게소 조리로봇 103개 매장 시대, 전용 식자재 없이 로봇 맛의 한계 = 휴게소 기회 손실</span>
+        </div>
+        <div style="background:rgba(200,245,66,0.04);border:1px solid rgba(200,245,66,0.15);padding:12px 20px;font-size:12px;">
+          <strong style="color:var(--accent);">Why Us:</strong> <span style="color:var(--text-muted);">범화 로봇 전용 스펙 소스 개발 완료 + 계란블럭 업그레이드 = 즉시 공급 가능한 유일한 파트너</span>
+        </div>
+        <div style="background:rgba(200,245,66,0.03);border:1px solid rgba(200,245,66,0.12);padding:12px 20px;font-size:12px;">
+          <strong style="color:var(--accent);">What We Offer:</strong> <span style="color:var(--text-muted);">전용 라면소스 + 계란블럭 정기납품 + 재고관리 + 품질 보증 패키지</span>
+        </div>
+        <div style="background:rgba(200,245,66,0.02);border:1px solid rgba(200,245,66,0.1);padding:12px 20px;border-radius:0 0 8px 8px;font-size:12px;">
+          <strong style="color:var(--accent);">Ask:</strong> <span style="color:var(--text-muted);">파일럿 1개 사이트 3개월 시범 납품 계약 → 성과 확인 후 전체 확장</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>수주를 위한 단계별 액션 플랜 <span class="badge">실행</span></h3>
+      <div style="margin-top:16px;">
+        <div class="proposal-step">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <h4>범화 내부 정렬 (이번 주)</h4>
+            <p>범화 측에 링크어블의 3PL 역할을 공식 제안. 범화 로봇 영업 시 식자재 번들 제안 구조 합의.</p>
+            <ul class="action-list">
+              <li>범화와 "우선공급 파트너" MOU 초안 작성 및 협의</li>
+              <li>번들 제안 구조 합의: 로봇 계약 시 식자재 공급 자동 포함 조건</li>
+              <li>샘플 소스·계란블럭 범화 내부 테스트 요청</li>
+            </ul>
+          </div>
+        </div>
+        <div class="proposal-step">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <h4>제안서 제작 (1~2주)</h4>
+            <p>McKinsey Pyramid 구조 기반 2가지 제안서 제작: (A) 범화 내부 공유용, (B) 휴게소 운영사 제출용.</p>
+            <ul class="action-list">
+              <li>제안서 A: 범화에게 — "링크어블과 번들하면 범화 로봇 수주율 높아지는 이유"</li>
+              <li>제안서 B: 휴게소에게 — "로봇 + 전용 소스로 라면 맛 표준화 + 비용 절감"</li>
+              <li>계란블럭·소스 샘플 키트 준비 (시식용)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="proposal-step">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <h4>파일럿 사이트 수주 (2~6주)</h4>
+            <p>범화와 함께 1~2개 휴게소 공동 방문 및 제안. 시식 데모 포함.</p>
+            <ul class="action-list">
+              <li>범화 기설치 사이트 or 신규 계약 예정 사이트 타겟 선정</li>
+              <li>현장 방문 시 로봇으로 직접 조리 + 시식 — 맛 차별화 시연</li>
+              <li>파일럿 조건: 3개월 무상 or 최저가 납품 → 데이터 확보 후 정식 계약</li>
+            </ul>
+          </div>
+        </div>
+        <div class="proposal-step">
+          <div class="step-num">04</div>
+          <div class="step-content">
+            <h4>식품 인증 · 공급 체계 구축 (병행, 1~3개월)</h4>
+            <p>파일럿 진행과 동시에 법적·위생 요건 충족. B2B 공급사로서 신뢰도 확보.</p>
+            <ul class="action-list">
+              <li>소스·계란블럭 식품위생법 적합 확인 및 인증 서류 준비</li>
+              <li>납품 단가표, 발주-납품 절차서, 품질보증서 양식 완성</li>
+              <li>OEM 파트너 계약 및 최소 발주량(MOQ) 확정</li>
+            </ul>
+          </div>
+        </div>
+        <div class="proposal-step" style="border-bottom:none;">
+          <div class="step-num">05</div>
+          <div class="step-content">
+            <h4>데이터 기반 확장 (3~6개월)</h4>
+            <p>파일럿 성과 수치화 → 전체 사이트 확장 제안.</p>
+            <ul class="action-list">
+              <li>파일럿 데이터: 월 소비량, 고객 만족도 변화, 운영 편의성</li>
+              <li>"파일럿 성과 보고서" 제작 → 범화 + 타 휴게소 영업 자료로 활용</li>
+              <li>범화 전체 설치 사이트 정식 납품 계약 전환</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 06: KPI ===== -->
+  <div id="section-kpi" class="section">
+    <div class="section-title">
+      <div class="section-num">06</div>
+      <div class="section-text">
+        <h2>KPI & 성과 지표</h2>
+        <p>McKinsey OKR 구조 + Bain 충성도 경제학 — 측정 가능한 목표 설정</p>
+      </div>
+    </div>
+
+    <div style="background:var(--surface);border:1px solid var(--border2);border-radius:12px;overflow:hidden;margin-bottom:24px;">
+      <table>
+        <thead>
+          <tr>
+            <th>지표</th><th>현재</th><th>3개월 목표</th><th>6개월 목표</th><th>12개월 목표</th><th>중요도</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>범화 MOU 체결</td>
+            <td>협의 중</td>
+            <td style="color:var(--accent);font-weight:700;">완료</td>
+            <td style="color:var(--accent);">독점 조항 포함</td>
+            <td style="color:var(--accent);">유지</td>
+            <td><span class="tag tag-red">최우선</span></td>
+          </tr>
+          <tr>
+            <td>납품 사이트 수</td>
+            <td>0</td>
+            <td style="color:var(--accent);font-weight:700;">1~2개</td>
+            <td style="color:var(--accent);">5~10개</td>
+            <td style="color:var(--accent);">20개 이상</td>
+            <td><span class="tag tag-green">핵심</span></td>
+          </tr>
+          <tr>
+            <td>월 식자재 납품 매출</td>
+            <td>0</td>
+            <td style="color:var(--accent);font-weight:700;">300~500만원</td>
+            <td style="color:var(--accent);">1,500만원</td>
+            <td style="color:var(--accent);">5,000만원+</td>
+            <td><span class="tag tag-green">핵심</span></td>
+          </tr>
+          <tr>
+            <td>재발주율</td>
+            <td>—</td>
+            <td>초기 데이터</td>
+            <td style="color:var(--accent);font-weight:700;">80% 이상</td>
+            <td style="color:var(--accent);">90% 이상</td>
+            <td><span class="tag tag-orange">중요</span></td>
+          </tr>
+          <tr>
+            <td>소스·계란블럭 식품 인증</td>
+            <td>개발 완료</td>
+            <td style="color:var(--accent);font-weight:700;">인증 신청</td>
+            <td style="color:var(--accent);">인증 완료</td>
+            <td style="color:var(--accent);">유지</td>
+            <td><span class="tag tag-orange">중요</span></td>
+          </tr>
+          <tr>
+            <td>파일럿 고객만족도</td>
+            <td>—</td>
+            <td>기준선 설정</td>
+            <td style="color:var(--accent);font-weight:700;">현 대비 +15%</td>
+            <td style="color:var(--accent);">측정 지속</td>
+            <td><span class="tag tag-blue">트래킹</span></td>
+          </tr>
+          <tr>
+            <td>단가 마진율</td>
+            <td>협의 중</td>
+            <td style="color:var(--accent);font-weight:700;">15~20%</td>
+            <td style="color:var(--accent);">20~25%</td>
+            <td style="color:var(--accent);">25%+</td>
+            <td><span class="tag tag-green">핵심</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid-3 mb-24">
+      <div class="card">
+        <h3>월 매출 시나리오 <span class="badge">BCG</span></h3>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+          <div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">보수적 시나리오 (로봇 15개 매장)</div>
+            <div style="background:var(--surface2);border-radius:4px;overflow:hidden;height:8px;margin-bottom:4px;">
+              <div style="width:25%;height:100%;background:rgba(200,245,66,0.3);"></div>
+            </div>
+            <div style="font-family:'DM Mono',monospace;font-size:13px;color:var(--accent);">월 1,500만원</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">기본 시나리오 (50개 매장)</div>
+            <div style="background:var(--surface2);border-radius:4px;overflow:hidden;height:8px;margin-bottom:4px;">
+              <div style="width:55%;height:100%;background:var(--accent);opacity:0.5;"></div>
+            </div>
+            <div style="font-family:'DM Mono',monospace;font-size:13px;color:var(--accent);">월 5,000만원</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">낙관적 시나리오 (100+ 매장)</div>
+            <div style="background:var(--surface2);border-radius:4px;overflow:hidden;height:8px;margin-bottom:4px;">
+              <div style="width:90%;height:100%;background:var(--accent);"></div>
+            </div>
+            <div style="font-family:'DM Mono',monospace;font-size:13px;color:var(--accent);">월 1억원+</div>
+          </div>
+        </div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:10px;">* 매장당 월 식자재 100만원 기준, 마진 20% 가정</div>
+      </div>
+      <div class="card">
+        <h3>진입 타이밍 <span class="badge">McKinsey</span></h3>
+        <div style="font-size:12px;color:var(--text-muted);display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+          <div style="padding:10px;background:rgba(200,245,66,0.06);border-radius:6px;border-left:2px solid var(--accent);">
+            <strong style="color:var(--accent);">지금이 최적 타이밍</strong><br>음식류 조리로봇 15개 매장 → 빠르게 확산 중. 경쟁자 없는 6~12개월 윈도우 존재
+          </div>
+          <div style="padding:10px;background:rgba(255,71,87,0.06);border-radius:6px;border-left:2px solid var(--danger);">
+            <strong style="color:var(--danger);">6개월 내 행동 필요</strong><br>대형 유통사가 이 시장을 인식하면 자본력으로 진입. 선점 속도가 곧 해자
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>핵심 성공 요인 <span class="badge">Bain</span></h3>
+        <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+          <li style="font-size:12px;display:flex;gap:8px;align-items:flex-start;">
+            <span style="color:var(--accent);flex-shrink:0;">①</span>
+            <span style="color:var(--text-muted);">범화와의 공식 계약 — 기회의 문</span>
+          </li>
+          <li style="font-size:12px;display:flex;gap:8px;align-items:flex-start;">
+            <span style="color:var(--accent);flex-shrink:0;">②</span>
+            <span style="color:var(--text-muted);">맛 데이터 확보 — 설득력의 근거</span>
+          </li>
+          <li style="font-size:12px;display:flex;gap:8px;align-items:flex-start;">
+            <span style="color:var(--accent);flex-shrink:0;">③</span>
+            <span style="color:var(--text-muted);">납품 안정성 — 신뢰의 기반</span>
+          </li>
+          <li style="font-size:12px;display:flex;gap:8px;align-items:flex-start;">
+            <span style="color:var(--accent);flex-shrink:0;">④</span>
+            <span style="color:var(--text-muted);">빠른 레퍼런스 축적 — 확산의 엔진</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="insight">
+      <div class="insight-label">최종 전략 결론 — McKinsey So What</div>
+      <p>링크어블은 지금 당장 "범화의 로봇 영업팀과 함께 다니는 식자재 파트너"로 자리잡아야 합니다. 범화가 로봇을 팔 때마다 링크어블 식자재 계약이 자동으로 따라오는 구조를 먼저 만드는 것이 모든 전략의 전제. 제품 개발은 완료됐고, 시장 타이밍도 맞습니다. 지금 가장 중요한 단 하나의 행동은 — <strong>범화와 공식 파트너십 계약서 한 장을 빨리 쓰는 것</strong>입니다.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
