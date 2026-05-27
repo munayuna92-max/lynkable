@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lynkable · 매출 분석 리포트 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=IBM+Plex+Mono:wght@400;500;600&family=Bebas+Neue&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#080a0f;
+  --bg1:#0d1018;
+  --bg2:#13161f;
+  --bg3:#1a1e29;
+  --border:rgba(255,255,255,0.06);
+  --border2:rgba(255,255,255,0.1);
+  --text:#dde1ee;
+  --muted:#5a6070;
+  --dim:#2e3345;
+  --accent:#00e5c0;
+  --accent2:#ff4b6e;
+  --accent3:#ffc93c;
+  --accent4:#6c8cff;
+  --green:#00e5c0;
+  --red:#ff4b6e;
+  --yellow:#ffc93c;
+  --blue:#6c8cff;
+  --mono:'IBM Plex Mono',monospace;
+  --sans:'Noto Sans KR',sans-serif;
+  --display:'Bebas Neue',sans-serif;
+}
+
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* NOISE TEXTURE */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:0;
+  opacity:.4;
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes countUp{from{opacity:0}to{opacity:1}}
+@keyframes barGrow{from{width:0}to{width:var(--w)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes scanline{0%{transform:translateY(-100%)}100%{transform:translateY(100vh)}}
+@keyframes glow{0%,100%{box-shadow:0 0 8px rgba(0,229,192,.2)}50%{box-shadow:0 0 20px rgba(0,229,192,.5)}}
+
+.fade-up{animation:fadeUp .7s ease both}
+.fade-up:nth-child(1){animation-delay:.05s}
+.fade-up:nth-child(2){animation-delay:.1s}
+.fade-up:nth-child(3){animation-delay:.15s}
+.fade-up:nth-child(4){animation-delay:.2s}
+.fade-up:nth-child(5){animation-delay:.25s}
+.fade-up:nth-child(6){animation-delay:.3s}
+
+/* SCANLINE EFFECT */
+.scanline{
+  position:fixed;
+  top:0;left:0;right:0;
+  height:3px;
+  background:linear-gradient(transparent,rgba(0,229,192,.05),transparent);
+  animation:scanline 8s linear infinite;
+  pointer-events:none;
+  z-index:1000;
+}
+
+/* WRAPPER */
+.page{
+  position:relative;
+  z-index:1;
+  max-width:1100px;
+  margin:0 auto;
+  padding:40px 32px 60px;
+}
+
+/* ─── HEADER ──────────────────────────── */
+.header{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:24px;
+  align-items:end;
+  margin-bottom:48px;
+  padding-bottom:24px;
+  border-bottom:1px solid var(--border2);
+  animation:fadeUp .8s ease both;
+}
+
+.header-eyebrow{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:4px;
+  text-transform:uppercase;
+  color:var(--accent);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:12px;
+}
+.header-eyebrow::before{
+  content:'';
+  display:block;
+  width:24px;height:1px;
+  background:var(--accent);
+}
+
+.header-title{
+  font-family:var(--display);
+  font-size:56px;
+  letter-spacing:2px;
+  line-height:.9;
+  color:var(--text);
+  margin-bottom:8px;
+}
+.header-title span{color:var(--accent)}
+
+.header-sub{
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--muted);
+  letter-spacing:1px;
+}
+
+.header-total{
+  text-align:right;
+  padding:20px 24px;
+  background:var(--bg2);
+  border:1px solid var(--border2);
+  border-radius:8px;
+  min-width:200px;
+}
+.header-total-label{
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+.header-total-val{
+  font-family:var(--display);
+  font-size:38px;
+  letter-spacing:1px;
+  color:var(--text);
+  line-height:1;
+}
+.header-total-val span{font-size:14px;color:var(--muted);font-family:var(--mono)}
+.header-total-period{
+  font-family:var(--mono);
+  font-size:9px;
+  color:var(--muted);
+  margin-top:4px;
+}
+
+/* ─── KPI ROW ──────────────────────────── */
+.kpi-row{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-bottom:36px;
+}
+
+.kpi{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:18px 20px;
+  position:relative;
+  overflow:hidden;
+  transition:border-color .2s,transform .2s;
+}
+.kpi:hover{
+  border-color:var(--border2);
+  transform:translateY(-2px);
+}
+.kpi::after{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:2px;
+}
+.kpi.c-green::after{background:var(--green)}
+.kpi.c-red::after{background:var(--red)}
+.kpi.c-yellow::after{background:var(--yellow)}
+.kpi.c-blue::after{background:var(--blue)}
+
+.kpi-label{
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:10px;
+}
+.kpi-val{
+  font-family:var(--display);
+  font-size:32px;
+  letter-spacing:1px;
+  line-height:1;
+  color:var(--text);
+}
+.kpi-val small{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:normal;letter-spacing:0}
+.kpi-sub{
+  font-family:var(--mono);
+  font-size:10px;
+  color:var(--muted);
+  margin-top:6px;
+}
+.kpi-sub .up{color:var(--green)}
+.kpi-sub .down{color:var(--red)}
+.kpi-sub .warn{color:var(--yellow)}
+
+/* ─── SECTION LABEL ──────────────────── */
+.sec{
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:var(--muted);
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:16px;
+  margin-top:36px;
+}
+.sec::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ─── MAIN 2-COL ──────────────────────── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+/* ─── CARD ────────────────────────────── */
+.card{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:22px 24px;
+  transition:border-color .2s;
+}
+.card:hover{border-color:var(--border2)}
+.card-title{
+  font-size:12px;
+  font-weight:700;
+  color:var(--text);
+  margin-bottom:18px;
+  letter-spacing:-.2px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.card-title .dot{
+  width:6px;height:6px;
+  border-radius:50%;
+  flex-shrink:0;
+}
+
+/* ─── MONTHLY BAR CHART ──────────────── */
+.month-bar{margin-bottom:18px}
+.mb-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  margin-bottom:7px;
+}
+.mb-label{
+  font-family:var(--mono);
+  font-size:10px;
+  color:var(--muted);
+  letter-spacing:1px;
+}
+.mb-val{
+  font-family:var(--mono);
+  font-size:13px;
+  color:var(--text);
+  font-weight:600;
+}
+.mb-track{
+  height:10px;
+  background:rgba(255,255,255,0.04);
+  border-radius:5px;
+  overflow:hidden;
+  position:relative;
+}
+.mb-fill{
+  height:100%;
+  border-radius:5px;
+  animation:barGrow .9s cubic-bezier(.4,0,.2,1) both;
+}
+.mb-fill.mar{
+  --w:23%;
+  background:linear-gradient(90deg,#00bfa5,#00e5c0);
+  box-shadow:0 0 12px rgba(0,229,192,.3);
+}
+.mb-fill.apr{
+  --w:100%;
+  background:linear-gradient(90deg,#5272ff,#6c8cff);
+  box-shadow:0 0 12px rgba(108,140,255,.3);
+}
+.mb-fill.may{
+  --w:73%;
+  background:linear-gradient(90deg,#e6a800,#ffc93c);
+  box-shadow:0 0 12px rgba(255,201,60,.3);
+}
+.mb-tags{
+  display:flex;
+  gap:5px;
+  margin-top:6px;
+  flex-wrap:wrap;
+}
+.tag{
+  font-family:var(--mono);
+  font-size:8px;
+  letter-spacing:.5px;
+  padding:2px 7px;
+  border-radius:3px;
+  border:1px solid;
+}
+.tag.paid{color:var(--green);border-color:rgba(0,229,192,.25);background:rgba(0,229,192,.07)}
+.tag.due{color:var(--yellow);border-color:rgba(255,201,60,.25);background:rgba(255,201,60,.07)}
+
+/* ─── DONUT SVG ──────────────────────── */
+.donut-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:16px;
+}
+.donut-svg-wrap{position:relative;width:140px;height:140px}
+.donut-center{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  text-align:center;
+}
+.donut-pct{
+  font-family:var(--display);
+  font-size:32px;
+  color:var(--red);
+  line-height:1;
+  display:block;
+}
+.donut-desc{
+  font-family:var(--mono);
+  font-size:9px;
+  color:var(--muted);
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
+.legend{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  width:100%;
+}
+.legend-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-family:var(--mono);
+  font-size:10px;
+  color:var(--muted);
+}
+.legend-left{display:flex;align-items:center;gap:7px}
+.ldot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.legend-val{color:var(--text);font-weight:600}
+.legend-pct{
+  font-size:9px;
+  padding:1px 6px;
+  border-radius:3px;
+  background:rgba(255,255,255,.05);
+}
+
+/* ─── TRANSACTION TABLE ──────────────── */
+.tx-table{width:100%;border-collapse:collapse}
+.tx-table th{
+  font-family:var(--mono);
+  font-size:8px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--dim);
+  padding:0 8px 10px;
+  text-align:left;
+  border-bottom:1px solid var(--border);
+}
+.tx-table th:last-child,.tx-table td:last-child{text-align:center}
+.tx-table th.right,.tx-table td.right{text-align:right}
+.tx-table td{
+  padding:11px 8px;
+  border-bottom:1px solid rgba(255,255,255,.025);
+  vertical-align:middle;
+}
+.tx-table tr:last-child td{border-bottom:none}
+.tx-table tr{transition:background .15s}
+.tx-table tr:hover td{background:rgba(255,255,255,.02)}
+.month-chip{
+  font-family:var(--mono);
+  font-size:9px;
+  font-weight:600;
+  padding:3px 8px;
+  border-radius:4px;
+  display:inline-block;
+  letter-spacing:.5px;
+}
+.mc-mar{background:rgba(0,229,192,.12);color:#00e5c0}
+.mc-apr{background:rgba(108,140,255,.12);color:#6c8cff}
+.mc-may{background:rgba(255,201,60,.12);color:#ffc93c}
+.tx-co{font-size:12px;font-weight:600;color:var(--text)}
+.tx-item{font-size:10px;color:var(--muted);margin-top:2px}
+.tx-amt{
+  font-family:var(--mono);
+  font-size:12px;
+  font-weight:600;
+  color:var(--text);
+}
+.badge{
+  font-family:var(--mono);
+  font-size:8px;
+  font-weight:700;
+  letter-spacing:.5px;
+  padding:3px 8px;
+  border-radius:12px;
+  display:inline-block;
+}
+.b-paid{background:rgba(0,229,192,.12);color:var(--green)}
+.b-due{background:rgba(255,75,110,.12);color:var(--red)}
+.share-bar{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.sb-track{
+  width:50px;height:3px;
+  background:rgba(255,255,255,.06);
+  border-radius:2px;overflow:hidden;
+}
+.sb-fill{height:100%;border-radius:2px;background:var(--accent4)}
+.sb-txt{
+  font-family:var(--mono);
+  font-size:9px;
+  color:var(--muted);
+  width:30px;
+}
+
+/* ─── PRODUCT MIX ──────────────────── */
+.pm-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:9px 10px;
+  border-radius:6px;
+  margin-bottom:6px;
+  background:rgba(255,255,255,.02);
+  transition:background .15s;
+  cursor:default;
+}
+.pm-row:hover{background:rgba(255,255,255,.04)}
+.pm-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.pm-name{flex:1;font-size:11px;color:var(--muted)}
+.pm-track{
+  width:90px;height:4px;
+  background:rgba(255,255,255,.05);
+  border-radius:2px;overflow:hidden;
+}
+.pm-fill{height:100%;border-radius:2px}
+.pm-amt{
+  font-family:var(--mono);
+  font-size:10px;
+  color:var(--text);
+  width:85px;text-align:right;
+}
+.pm-pct{
+  font-family:var(--mono);
+  font-size:9px;
+  color:var(--muted);
+  width:32px;text-align:right;
+}
+
+/* ─── INSIGHT BOX ──────────────────── */
+.insight{
+  background:linear-gradient(135deg,rgba(0,229,192,.06),rgba(108,140,255,.04));
+  border:1px solid rgba(0,229,192,.15);
+  border-radius:10px;
+  padding:22px 26px;
+  position:relative;
+  overflow:hidden;
+}
+.insight::before{
+  content:'';
+  position:absolute;
+  top:-40px;right:-40px;
+  width:150px;height:150px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(0,229,192,.06),transparent 70%);
+  pointer-events:none;
+}
+.insight-label{
+  font-family:var(--mono);
+  font-size:8px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;
+}
+.insight-label::before{
+  content:'';display:block;
+  width:16px;height:1px;background:var(--accent);
+}
+.insight-text{
+  font-size:12.5px;
+  color:#a0a8bf;
+  line-height:1.75;
+}
+.hl{color:var(--accent);font-weight:700}
+.hl-r{color:var(--red);font-weight:700}
+.hl-g{color:var(--green);font-weight:700}
+.hl-y{color:var(--yellow);font-weight:700}
+.hl-b{color:var(--blue);font-weight:700}
+
+/* ─── CORE vs NON-CORE ──────────────── */
+.ratio-bar-wrap{margin:14px 0}
+.rb-label{
+  display:flex;justify-content:space-between;
+  font-family:var(--mono);font-size:10px;
+  color:var(--muted);margin-bottom:5px;
+}
+.rb-track{
+  height:8px;background:rgba(255,255,255,.05);
+  border-radius:4px;overflow:hidden;
+  display:flex;
+}
+.rb-seg{height:100%;transition:width .9s ease}
+.rb-core{background:linear-gradient(90deg,#6c8cff,#8fa6ff)}
+.rb-noncore{background:linear-gradient(90deg,#ffc93c,#ffd97a)}
+.rb-legend{
+  display:flex;gap:16px;margin-top:8px;
+  font-family:var(--mono);font-size:9px;color:var(--muted);
+}
+.rb-legend span{display:flex;align-items:center;gap:5px}
+.rb-dot{width:8px;height:8px;border-radius:2px}
+
+/* ─── STRATEGY SECTION ──────────────── */
+.strat-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:14px;
+}
+
+.strat-card{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:18px 20px;
+  transition:border-color .2s,transform .2s;
+  position:relative;
+  overflow:hidden;
+}
+.strat-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.strat-card::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;height:2px;
+}
+.sc-now::before{background:var(--red)}
+.sc-short::before{background:var(--yellow)}
+.sc-mid::before{background:var(--blue)}
+.sc-long::before{background:var(--accent)}
+
+.urgency-tag{
+  font-family:var(--mono);
+  font-size:8px;letter-spacing:1.5px;text-transform:uppercase;
+  padding:2px 8px;border-radius:3px;border:1px solid;
+  display:inline-block;margin-bottom:10px;
+}
+.ut-now{color:var(--red);border-color:rgba(255,75,110,.3);background:rgba(255,75,110,.08)}
+.ut-short{color:var(--yellow);border-color:rgba(255,201,60,.3);background:rgba(255,201,60,.08)}
+.ut-mid{color:var(--blue);border-color:rgba(108,140,255,.3);background:rgba(108,140,255,.08)}
+.ut-long{color:var(--accent);border-color:rgba(0,229,192,.3);background:rgba(0,229,192,.08)}
+
+.strat-icon{font-size:20px;margin-bottom:8px;display:block}
+.strat-title{
+  font-size:13px;font-weight:700;
+  color:var(--text);margin-bottom:10px;
+  letter-spacing:-.3px;
+}
+.strat-list{list-style:none}
+.strat-list li{
+  font-size:11px;color:var(--muted);
+  padding-left:14px;position:relative;
+  margin-bottom:5px;line-height:1.55;
+}
+.strat-list li::before{
+  content:'›';
+  position:absolute;left:0;
+  color:var(--accent);font-weight:700;
+}
+
+/* ─── ALERT BOX ──────────────────────── */
+.alert-box{
+  background:rgba(255,75,110,.06);
+  border:1px solid rgba(255,75,110,.2);
+  border-radius:8px;
+  padding:16px 20px;
+  display:flex;align-items:flex-start;gap:14px;
+}
+.alert-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+.alert-text{font-size:12px;color:#c8a0a8;line-height:1.7}
+.alert-text strong{color:var(--red)}
+
+/* ─── FOOTER ──────────────────────────── */
+.footer{
+  margin-top:48px;
+  padding-top:20px;
+  border-top:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-family:var(--mono);
+  font-size:9px;
+  color:var(--dim);
+  letter-spacing:1px;
+}
+</style>
+</head>
+<body>
+
+<div class="scanline"></div>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header fade-up">
+    <div>
+      <div class="header-eyebrow">LYNKABLE · INTERNAL REPORT · 2026.Q2</div>
+      <div class="header-title">매출 <span>실적</span><br>분석 리포트</div>
+      <div class="header-sub">2026.03 – 2026.05 · 세금계산서 + 수금현황 기준</div>
+    </div>
+    <div class="header-total">
+      <div class="header-total-label">3개월 총 매출</div>
+      <div class="header-total-val">16,889<span>천원</span></div>
+      <div class="header-total-period">NET OF CANCELLATIONS · 순거래 6건</div>
+    </div>
+  </div>
+
+  <!-- KPI ROW -->
+  <div class="kpi-row">
+    <div class="kpi c-green fade-up">
+      <div class="kpi-label">수금 완료</div>
+      <div class="kpi-val">5,245<small>천원</small></div>
+      <div class="kpi-sub"><span class="up">31.0%</span> of total</div>
+    </div>
+    <div class="kpi c-red fade-up">
+      <div class="kpi-label">미수금</div>
+      <div class="kpi-val">11,645<small>천원</small></div>
+      <div class="kpi-sub"><span class="down">69.0%</span> 미회수 ⚠</div>
+    </div>
+    <div class="kpi c-yellow fade-up">
+      <div class="kpi-label">월평균 매출</div>
+      <div class="kpi-val">5,630<small>천원</small></div>
+      <div class="kpi-sub"><span class="warn">BEP 미달</span> 구간</div>
+    </div>
+    <div class="kpi c-blue fade-up">
+      <div class="kpi-label">거래 건수</div>
+      <div class="kpi-val">6<small>건</small></div>
+      <div class="kpi-sub">취소/수정 3건 제외</div>
+    </div>
+  </div>
+
+  <!-- SECTION 1: 월별 매출 + 수금현황 -->
+  <div class="sec fade-up">월별 매출 분석</div>
+  <div class="grid2 fade-up">
+
+    <!-- 바 차트 -->
+    <div class="card">
+      <div class="card-title">
+        <div class="dot" style="background:var(--accent)"></div>
+        월별 매출 추이 (합계금액 기준)
+      </div>
+
+      <div class="month-bar">
+        <div class="mb-head">
+          <span class="mb-label">03월 · MAR</span>
+          <span class="mb-val">1,944,800원</span>
+        </div>
+        <div class="mb-track">
+          <div class="mb-fill mar" style="animation-delay:.3s"></div>
+        </div>
+        <div class="mb-tags">
+          <span class="tag paid">✓ 스피드랙 완료</span>
+        </div>
+      </div>
+
+      <div class="month-bar">
+        <div class="mb-head">
+          <span class="mb-label">04월 · APR <span style="color:var(--blue);font-size:9px;margin-left:6px">+344% MoM</span></span>
+          <span class="mb-val">8,635,000원</span>
+        </div>
+        <div class="mb-track">
+          <div class="mb-fill apr" style="animation-delay:.5s"></div>
+        </div>
+        <div class="mb-tags">
+          <span class="tag paid">✓ 부산과학관 완료</span>
+          <span class="tag due">! 제이에스테크 미수</span>
+        </div>
+      </div>
+
+      <div class="month-bar">
+        <div class="mb-head">
+          <span class="mb-label">05월 · MAY <span style="color:var(--red);font-size:9px;margin-left:6px">−27% MoM</span></span>
+          <span class="mb-val">6,309,600원</span>
+        </div>
+        <div class="mb-track">
+          <div class="mb-fill may" style="animation-delay:.7s"></div>
+        </div>
+        <div class="mb-tags">
+          <span class="tag due">! 풀무원 미수</span>
+          <span class="tag due">! 제이에스테크 미수</span>
+          <span class="tag due">! 케이지이니 미수</span>
+          <span class="tag due">! 꼬순향 미수</span>
+        </div>
+      </div>
+
+      <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);line-height:1.75">
+        · 3월: 단 1건, 부품 공급으로 조용히 시작<br>
+        · 4월: 로봇 대여 + 컨베이어로 급등 (+344%)<br>
+        · 5월: 건수 3건으로 증가, 금액은 역성장<br>
+        · <span style="color:var(--red)">5월 발행 전건 미수 → 현금 유입 없음</span>
+      </div>
+    </div>
+
+    <!-- 수금 현황 -->
+    <div class="card">
+      <div class="card-title">
+        <div class="dot" style="background:var(--red)"></div>
+        수금 현황 (Cash Status)
+      </div>
+      <div class="donut-wrap">
+        <div class="donut-svg-wrap">
+          <svg width="140" height="140" viewBox="0 0 140 140">
+            <circle cx="70" cy="70" r="54" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="18"/>
+            <!-- 완료 31% / 미수 69% / circumference=2π×54≈339 / 31%≈105 / 69%≈234 -->
+            <circle cx="70" cy="70" r="54" fill="none" stroke="#00e5c0" stroke-width="18"
+              stroke-dasharray="105 234" stroke-dashoffset="84.75"
+              stroke-linecap="round" style="opacity:.9"/>
+            <circle cx="70" cy="70" r="54" fill="none" stroke="#ff4b6e" stroke-width="18"
+              stroke-dasharray="234 105" stroke-dashoffset="-19.5"
+              stroke-linecap="round" style="opacity:.85"/>
+          </svg>
+          <div class="donut-center">
+            <span class="donut-pct">69%</span>
+            <span class="donut-desc">미수</span>
+          </div>
+        </div>
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-left">
+              <div class="ldot" style="background:var(--green)"></div>
+              <span>수금 완료</span>
+            </div>
+            <span class="legend-val">5,244,800원</span>
+            <span class="legend-pct">31%</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-left">
+              <div class="ldot" style="background:var(--red)"></div>
+              <span>미수금 잔액</span>
+            </div>
+            <span class="legend-val">11,644,600원</span>
+            <span class="legend-pct">69%</span>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);font-size:10.5px;color:var(--muted);line-height:1.75">
+        ⚠ <span style="color:var(--red);font-weight:700">미수 2건이 전체의 84%</span><br>
+        제이에스테크 5.3M + 풀무원 4.4M<br>
+        5월 발행 3건 전부 미수 = 신규 매출이<br>
+        현금으로 전환되지 않는 위험 구조
+      </div>
+    </div>
+  </div>
+
+  <!-- 거래 상세 -->
+  <div class="sec fade-up">거래 상세 내역</div>
+  <div class="card fade-up">
+    <table class="tx-table">
+      <thead>
+        <tr>
+          <th>월</th>
+          <th>거래처</th>
+          <th>품목</th>
+          <th>구성비</th>
+          <th class="right">금액 (합계)</th>
+          <th>상태</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="month-chip mc-mar">3월</span></td>
+          <td><div class="tx-co">㈜스피드랙</div></td>
+          <td><div class="tx-item">12호기 입착로라 장치</div></td>
+          <td>
+            <div class="share-bar">
+              <div class="sb-track"><div class="sb-fill" style="width:11.5%;background:var(--accent)"></div></div>
+              <div class="sb-txt">11.5%</div>
+            </div>
+          </td>
+          <td class="right tx-amt">1,944,800</td>
+          <td><span class="badge b-paid">완료</span></td>
+        </tr>
+        <tr>
+          <td><span class="month-chip mc-apr">4월</span></td>
+          <td><div class="tx-co">부산과학관</div></td>
+          <td><div class="tx-item">치킨 로봇 대여</div></td>
+          <td>
+            <div class="share-bar">
+              <div class="sb-track"><div class="sb-fill" style="width:19.5%;background:var(--blue)"></div></div>
+              <div class="sb-txt">19.5%</div>
+            </div>
+          </td>
+          <td class="right tx-amt">3,300,000</td>
+          <td><span class="badge b-paid">완료</span></td>
+        </tr>
+        <tr>
+          <td><span class="month-chip mc-apr">4월</span></td>
+          <td><div class="tx-co">제이에스테크</div></td>
+          <td><div class="tx-item">와이어메쉬 컨베이어 제작</div></td>
+          <td>
+            <div class="share-bar">
+              <div class="sb-track"><div class="sb-fill" style="width:31.6%;background:var(--red)"></div></div>
+              <div class="sb-txt">31.6%</div>
+            </div>
+          </td>
+          <td class="right tx-amt">5,335,000</td>
+          <td><span class="badge b-due">미수</span></td>
+        </tr>
+        <tr>
+          <td><span class="month-chip mc-may">5월</span></td>
+          <td><div class="tx-co">㈜케이지이니</div></td>
+          <td><div class="tx-item">치킨로봇 철수 출장 작업</div></td>
+          <td>
+            <div class="share-bar">
+              <div class="sb-track"><div class="sb-fill" style="width:5.2%;background:var(--yellow)"></div></div>
+              <div class="sb-txt">5.2%</div>
+            </div>
+          </td>
+          <td class="right tx-amt">880,000</td>
+          <td><span class="badge b-due">미수</span></td>
+        </tr>
+        <tr>
+          <td><span class="month-chip mc-may">5월</span></td>
+          <td><div class="tx-co">㈜풀무원푸드</div></td>
+          <td><div class="tx-item">초음파세미기 YCW-SRW80</div></td>
+          <td>
+            <div class="share-bar">
+              <div class="sb-track"><div class="sb-fill" style="width:26.1%;background:var(--red)"></div></div>
+              <div class="sb-txt">26.1%</div>
+            </div>
+          </td>
+          <td class="right tx-amt">4,400,000</td>
+          <td><span class="badge b-due">미수</span></td>
+        </tr>
+        <tr>
+          <td><span class="month-chip mc-may">5월</span></td>
+          <td><div class="tx-co">㈜꼬순향</div></td>
+          <td><div class="tx-item">테프론 메쉬벨트</div></td>
+          <td>
+            <div class="share-bar">
+              <div class="sb-track"><div class="sb-fill" style="width:6.1%;background:var(--yellow)"></div></div>
+              <div class="sb-txt">6.1%</div>
+            </div>
+          </td>
+          <td class="right tx-amt">1,029,600</td>
+          <td><span class="badge b-due">미수</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- INSIGHT BOX -->
+  <div class="insight fade-up" style="margin-top:20px">
+    <div class="insight-label">CEO BRIEF · 지금 가장 중요한 것</div>
+    <div class="insight-text">
+      3개월 누적 <span class="hl">16.9M원</span> 매출은 월평균 <span class="hl">5.6M원</span>. 2인 스타트업 고정비 최소 <span class="hl-r">월 6~8M원</span>을 감안하면 실질적 <span class="hl-r">현금 BEP 미달</span> 구간. 통장에 실제 들어온 돈은 <span class="hl-g">5.2M원</span>뿐이며 나머지 <span class="hl-r">11.6M원(69%)이 미회수</span>. 한편 <span class="hl-b">풀무원 초음파세미기 납품</span>은 이 시기 최대 전략 성과 — 식품대기업 레퍼런스가 확보되었음. <span class="hl-y">치킨로봇 철수 작업</span>은 배치 종료 신호로, 원인 분석 없이는 로봇 전략 방향을 잡을 수 없음.
+    </div>
+  </div>
+
+  <!-- SECTION 2: 제품 구성 -->
+  <div class="sec fade-up">매출 구성 분석</div>
+  <div class="grid2 fade-up">
+    <div class="card">
+      <div class="card-title">
+        <div class="dot" style="background:var(--blue)"></div>
+        제품·서비스군별 매출 구성
+      </div>
+      <div class="pm-row">
+        <div class="pm-dot" style="background:#6c8cff"></div>
+        <div class="pm-name">초음파 장비 (세미기)</div>
+        <div class="pm-track"><div class="pm-fill" style="width:26%;background:#6c8cff"></div></div>
+        <div class="pm-amt">4,400,000</div>
+        <div class="pm-pct">26.1%</div>
+      </div>
+      <div class="pm-row">
+        <div class="pm-dot" style="background:#8fa6ff"></div>
+        <div class="pm-name">치킨 로봇 대여</div>
+        <div class="pm-track"><div class="pm-fill" style="width:19.5%;background:#8fa6ff"></div></div>
+        <div class="pm-amt">3,300,000</div>
+        <div class="pm-pct">19.5%</div>
+      </div>
+      <div class="pm-row">
+        <div class="pm-dot" style="background:#ffc93c"></div>
+        <div class="pm-name">컨베이어 제작 (수주)</div>
+        <div class="pm-track"><div class="pm-fill" style="width:31.6%;background:#ffc93c"></div></div>
+        <div class="pm-amt">5,335,000</div>
+        <div class="pm-pct">31.6%</div>
+      </div>
+      <div class="pm-row">
+        <div class="pm-dot" style="background:#00e5c0"></div>
+        <div class="pm-name">부품·소모품 공급</div>
+        <div class="pm-track"><div class="pm-fill" style="width:17.6%;background:#00e5c0"></div></div>
+        <div class="pm-amt">2,974,400</div>
+        <div class="pm-pct">17.6%</div>
+      </div>
+      <div class="pm-row">
+        <div class="pm-dot" style="background:#ff4b6e"></div>
+        <div class="pm-name">출장 서비스</div>
+        <div class="pm-track"><div class="pm-fill" style="width:5.2%;background:#ff4b6e"></div></div>
+        <div class="pm-amt">880,000</div>
+        <div class="pm-pct">5.2%</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <div class="dot" style="background:var(--yellow)"></div>
+        코어 vs 비코어 매출 비율
+      </div>
+      <div style="margin:8px 0 18px">
+        <div class="ratio-bar-wrap">
+          <div class="rb-label">
+            <span>코어 제품 (초음파 + 로봇)</span>
+            <span style="color:var(--blue)">45.6% · 7,700,000원</span>
+          </div>
+          <div class="rb-track">
+            <div class="rb-seg rb-core" style="width:45.6%"></div>
+            <div class="rb-seg rb-noncore" style="width:54.4%"></div>
+          </div>
+          <div class="rb-label" style="margin-top:5px">
+            <span>비코어 (컨베이어·부품·서비스)</span>
+            <span style="color:var(--yellow)">54.4% · 9,189,400원</span>
+          </div>
+          <div class="rb-legend">
+            <span><div class="rb-dot" style="background:#6c8cff"></div>코어</span>
+            <span><div class="rb-dot" style="background:#ffc93c"></div>비코어</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert-box">
+        <div class="alert-icon">⚠</div>
+        <div class="alert-text">
+          매출의 <strong>54%가 비코어</strong>. 현금 확보를 위한 불가피한 선택이지만, 이 비율이 계속되면 역량 분산으로 브랜드 포지셔닝이 묽어짐. 코어 비중 <strong>70%+ 목표</strong>로 단계적 재편 필요.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: STRATEGY -->
+  <div class="sec fade-up">전략 가이드라인</div>
+  <div class="strat-grid fade-up">
+
+    <div class="strat-card sc-now">
+      <span class="strat-icon">🔥</span>
+      <div class="urgency-tag ut-now">즉시 · 이번 주</div>
+      <div class="strat-title">미수금 집중 회수</div>
+      <ul class="strat-list">
+        <li>제이에스테크 5.3M — 납품 후 지급 일정 명시적으로 확인</li>
+        <li>풀무원 4.4M — 대기업 구매팀 지급 사이클 파악 (보통 60일)</li>
+        <li>다음 계약부터 착수금 30~50% 선수 조건 표준화</li>
+        <li>미수 미회수 상태에서 신규 수주 수용은 현금 악화만 가중</li>
+      </ul>
+    </div>
+
+    <div class="strat-card sc-short">
+      <span class="strat-icon">🎯</span>
+      <div class="urgency-tag ut-short">단기 · 1~2개월</div>
+      <div class="strat-title">풀무원 레퍼런스 전략</div>
+      <ul class="strat-list">
+        <li>식품대기업 납품 사실 → 즉시 회사소개서·B2B 제안서에 반영</li>
+        <li>오뚜기·CJ·동원·롯데푸드 등 동종 업계 영업 채널 개발</li>
+        <li>현장 사진 1~2장이 신뢰도를 10배 올려줌</li>
+        <li>초음파세미기 현장 피드백 수집 후 추가 대수 제안</li>
+      </ul>
+    </div>
+
+    <div class="strat-card sc-short">
+      <span class="strat-icon">🤖</span>
+      <div class="urgency-tag ut-short">단기 · 1~3개월</div>
+      <div class="strat-title">치킨로봇 전략 재설계</div>
+      <ul class="strat-list">
+        <li>케이지이니 철수 원인 분석 필수 — 기술/비용/운영 어느 쪽?</li>
+        <li>단기 이벤트 렌탈 ↔ 장기 구독 모델 명확히 분리</li>
+        <li>부산과학관 성공 케이스 → 전국 과학관·박물관 채널 개발</li>
+        <li>로봇 1대당 수익 구조 (렌탈 vs 판매) 재계산</li>
+      </ul>
+    </div>
+
+    <div class="strat-card sc-mid">
+      <span class="strat-icon">📈</span>
+      <div class="urgency-tag ut-mid">중기 · 3~6개월</div>
+      <div class="strat-title">MRR 구조 구축</div>
+      <ul class="strat-list">
+        <li>현재 100% 프로젝트성 → 월정액 MRR 전환이 생존 핵심</li>
+        <li>로봇 월 렌탈 + 소모품 정기 공급 + AS 패키지화</li>
+        <li>초음파 장비 유지보수 연간 계약 표준화</li>
+        <li>6개월 내 MRR 300만원 이상 확보를 중간 목표로 설정</li>
+      </ul>
+    </div>
+
+    <div class="strat-card sc-mid">
+      <span class="strat-icon">🏭</span>
+      <div class="urgency-tag ut-mid">중기 · 3~6개월</div>
+      <div class="strat-title">비코어 수주 정책 수립</div>
+      <ul class="strat-list">
+        <li>컨베이어·벨트류 수주 마진 기준 30%+ 설정</li>
+        <li>코어 매출 목표 달성 시 비코어 수주 자동 축소</li>
+        <li>비코어가 코어 개발 속도를 막고 있는지 월 단위 점검</li>
+        <li>"제조 외주업체"로 포지셔닝 굳어지지 않도록 경계</li>
+      </ul>
+    </div>
+
+    <div class="strat-card sc-long">
+      <span class="strat-icon">🚀</span>
+      <div class="urgency-tag ut-long">장기 · 6개월+</div>
+      <div class="strat-title">제품·채널 확장</div>
+      <ul class="strat-list">
+        <li>초음파 라인업: 세미기 → 튀김기·해동기 풀라인화</li>
+        <li>카페로봇 AI 관리SW → SaaS 전환 고마진 MRR</li>
+        <li>풀무원 레퍼런스 + 소홍서 채널로 중국 시장 진출</li>
+        <li>라면 조리 로봇 → 공공급식·프랜차이즈 B2B 공략</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 최종 한 줄 요약 -->
+  <div class="insight" style="margin-top:20px;border-color:rgba(255,201,60,.2);background:linear-gradient(135deg,rgba(255,201,60,.05),rgba(255,75,110,.03))">
+    <div class="insight-label" style="color:var(--yellow)">한 줄 결론</div>
+    <div class="insight-text" style="font-size:13.5px;font-weight:500;color:#c8c0a8">
+      지금 해야 할 것은 새 전략을 짜는 것이 아니라, <span class="hl-r">이미 벌어놓은 11.6M원을 회수</span>하고 <span class="hl-b">풀무원이라는 레버리지를 최대한 빨리 쓰는 것</span>. 전략은 현금이 있어야 실행된다.
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer fade-up">
+    <span>LYNKABLE INC. · INTERNAL USE ONLY</span>
+    <span>GENERATED · 2026.05.27</span>
+    <span>세금계산서 + 수금현황 기준 · NET OF CANCELLATIONS</span>
+  </div>
+
+</div>
+
+<script>
+// Animate bar fills on load
+window.addEventListener('load', () => {
+  document.querySelectorAll('.mb-fill').forEach((el, i) => {
+    el.style.animationDelay = (0.3 + i * 0.15) + 's';
+  });
+  document.querySelectorAll('.rb-seg').forEach(el => {
+    el.style.transition = 'width 1s cubic-bezier(.4,0,.2,1)';
+  });
+});
+</script>
+
+</body>
+</html>
