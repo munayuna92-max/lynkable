@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>링크어블 식자재 유통 사업 기획안</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --ink:#1a1a2e;--ink2:#3a3a5c;--muted:#8888aa;
+  --page:#fafaf8;--surface:#f2f2ee;--surface2:#e8e8e2;
+  --accent:#1a472a;--accent-light:#2d6a4f;--accent-pale:#d8f3dc;
+  --warn:#b5451b;--warn-pale:#fde8e0;
+  --blue:#1a3a5c;--blue-pale:#dbe9f7;
+  --border:#ddddd5;--border2:#c8c8be;
+  --gold:#8a6914;--gold-pale:#fef3cd;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--page);color:var(--ink);font-family:'Noto Sans KR',sans-serif;font-size:13px;line-height:1.75;}
+.page{max-width:900px;margin:0 auto;padding:48px 40px;}
+
+/* COVER */
+.cover{
+  background:var(--ink);color:#fff;
+  padding:56px 48px;border-radius:16px;margin-bottom:40px;
+  position:relative;overflow:hidden;
+}
+.cover::before{
+  content:'';position:absolute;right:-80px;top:-80px;
+  width:400px;height:400px;border-radius:50%;
+  background:radial-gradient(circle,rgba(45,106,79,0.4) 0%,transparent 70%);
+}
+.cover-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:16px;}
+.cover h1{font-family:'Noto Serif KR',serif;font-size:36px;font-weight:700;line-height:1.25;margin-bottom:16px;}
+.cover h1 em{color:#86efac;font-style:normal;}
+.cover-desc{font-size:14px;color:rgba(255,255,255,0.6);max-width:500px;line-height:1.8;}
+.cover-meta{display:flex;gap:32px;margin-top:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.1);}
+.cover-meta-item label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);display:block;margin-bottom:4px;}
+.cover-meta-item span{font-weight:600;font-size:14px;color:#fff;}
+
+/* SECTION */
+.section{margin-bottom:48px;}
+.sec-title{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:24px;padding-bottom:12px;
+  border-bottom:2px solid var(--ink);
+}
+.sec-num{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;color:var(--muted);background:var(--surface2);padding:2px 8px;border-radius:4px;}
+.sec-title h2{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:700;}
+.sec-title .badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500;letter-spacing:0.5px;}
+.badge-green{background:var(--accent-pale);color:var(--accent);}
+.badge-blue{background:var(--blue-pale);color:var(--blue);}
+.badge-warn{background:var(--warn-pale);color:var(--warn);}
+.badge-gold{background:var(--gold-pale);color:var(--gold);}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;}
+
+/* CARD */
+.card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:20px;}
+.card-accent{border-left:4px solid var(--accent);}
+.card-blue{border-left:4px solid var(--blue);}
+.card-warn{border-left:4px solid var(--warn);}
+.card-gold{border-left:4px solid var(--gold);}
+.card h4{font-size:13px;font-weight:700;margin-bottom:10px;color:var(--ink);}
+.card p,.card li{font-size:12px;color:var(--ink2);line-height:1.7;}
+.card ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:4px;}
+.card ul li::before{content:'—';color:var(--muted);margin-right:6px;}
+
+/* STAT */
+.stat{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 20px;text-align:center;}
+.stat .num{font-family:'Noto Serif KR',serif;font-size:32px;font-weight:700;color:var(--accent);line-height:1;}
+.stat .unit{font-size:12px;color:var(--muted);margin-top:4px;}
+.stat .label{font-size:11px;color:var(--ink2);margin-top:8px;line-height:1.5;}
+
+/* FLOW CHART */
+.flow{display:flex;align-items:center;gap:0;overflow-x:auto;padding:4px 0 8px;}
+.flow-box{
+  flex:1;min-width:120px;
+  background:#fff;border:1px solid var(--border);border-radius:8px;
+  padding:14px 12px;text-align:center;
+}
+.flow-box.hi{background:var(--accent);color:#fff;border-color:var(--accent);}
+.flow-box.hi h5,.flow-box.hi p{color:#fff;}
+.flow-box h5{font-size:11px;font-weight:700;margin-bottom:4px;}
+.flow-box p{font-size:10px;color:var(--muted);}
+.flow-arr{color:var(--muted);font-size:20px;padding:0 4px;flex-shrink:0;}
+.flow-box .tag{font-size:9px;padding:2px 6px;border-radius:3px;margin-top:6px;display:inline-block;}
+.flow-box.hi .tag{background:rgba(255,255,255,0.2);color:#fff;}
+.flow-box .tag-g{background:var(--accent-pale);color:var(--accent);}
+
+/* BENCH TABLE */
+.bench{width:100%;border-collapse:collapse;font-size:12px;}
+.bench thead tr{background:var(--ink);color:#fff;}
+.bench th{padding:10px 14px;text-align:left;font-weight:500;font-size:11px;letter-spacing:0.5px;}
+.bench td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink2);}
+.bench tbody tr:last-child td{border-bottom:none;}
+.bench tbody tr:nth-child(even){background:var(--surface);}
+.bench tbody tr.lynk{background:var(--accent-pale);}
+.bench tbody tr.lynk td{color:var(--accent);font-weight:600;}
+
+/* RISK TABLE */
+.risk-row{display:grid;grid-template-columns:1.5fr 1fr 2fr;gap:0;border-bottom:1px solid var(--border);padding:10px 0;align-items:start;}
+.risk-row:first-child{border-top:1px solid var(--border);background:var(--surface);padding:8px 0;}
+.risk-row:first-child div{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:0.5px;padding:0 12px;}
+.risk-row div{padding:0 12px;font-size:12px;color:var(--ink2);line-height:1.6;}
+.risk-row div:first-child{color:var(--ink);font-weight:500;}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr 1fr;gap:0;padding:10px 0;border-bottom:1px solid var(--border);align-items:center;}
+.kpi-row.header{background:var(--surface2);border-radius:6px 6px 0 0;padding:8px 0;}
+.kpi-row.header div{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:0.5px;}
+.kpi-row div{padding:0 12px;font-size:12px;color:var(--ink2);}
+.kpi-row div:first-child{color:var(--ink);font-weight:500;}
+.val{font-weight:700;color:var(--accent) !important;}
+
+/* INSIGHT */
+.insight{background:var(--accent-pale);border:1px solid rgba(26,71,42,0.2);border-radius:8px;padding:14px 18px;margin:12px 0;}
+.insight-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.insight p{font-size:13px;color:var(--accent-light);line-height:1.7;}
+
+.warn-box{background:var(--warn-pale);border:1px solid rgba(181,69,27,0.2);border-radius:8px;padding:14px 18px;margin:12px 0;}
+.warn-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--warn);margin-bottom:6px;}
+.warn-box p{font-size:12px;color:var(--warn);line-height:1.7;}
+
+/* MARGIN CALC */
+.margin-calc{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.margin-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:0;padding:10px 16px;border-bottom:1px solid var(--border);align-items:center;}
+.margin-row.header{background:var(--ink);color:#fff;padding:10px 16px;}
+.margin-row.header div{font-size:11px;letter-spacing:0.5px;}
+.margin-row div{font-size:12px;color:var(--ink2);}
+.margin-row div:first-child{color:var(--ink);font-weight:500;}
+.margin-row.total{background:var(--accent);color:#fff;}
+.margin-row.total div{color:#fff !important;font-weight:700;}
+.margin-row.subtotal{background:var(--accent-pale);}
+.margin-row.subtotal div{color:var(--accent) !important;font-weight:700;}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:32px 0;}
+.mb-16{margin-bottom:16px;}
+.mb-8{margin-bottom:8px;}
+.mt-16{margin-top:16px;}
+
+/* PRINT */
+@media print{
+  body{background:#fff;}
+  .cover{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-label">Internal Document · Lynkable Inc. · Confidential</div>
+  <h1>식자재 3PL 중간유통<br><em>사업 기획안</em></h1>
+  <div class="cover-desc">라면 액상소스 및 계란블럭 — 제조사·유통사 협력 기반 중소기업형 리스크 최소화 유통 전략</div>
+  <div class="cover-meta">
+    <div class="cover-meta-item"><label>대상 아이템</label><span>라면 액상소스 + 계란블럭</span></div>
+    <div class="cover-meta-item"><label>타겟 채널</label><span>휴게소 자동조리로봇 운영사</span></div>
+    <div class="cover-meta-item"><label>사업 모델</label><span>중간유통 마진 (에이전트형)</span></div>
+    <div class="cover-meta-item"><label>작성</label><span>주식회사 링크어블</span></div>
+  </div>
+</div>
+
+<!-- 1. EXECUTIVE SUMMARY -->
+<div class="section">
+  <div class="sec-title">
+    <span class="sec-num">01</span>
+    <h2>사업 개요 및 핵심 전략 방향</h2>
+    <span class="badge badge-green">Executive Summary</span>
+  </div>
+  <div class="g4 mb-16">
+    <div class="stat"><div class="num">0</div><div class="unit">재고 보유</div><div class="label">재고 리스크 없는 에이전트형 유통</div></div>
+    <div class="stat"><div class="num">15~25%</div><div class="unit">목표 중간 마진율</div><div class="label">제조사·유통사 원가 대비</div></div>
+    <div class="stat"><div class="num">2단계</div><div class="unit">공급 구조</div><div class="label">제조사→링크어블→유통사→휴게소</div></div>
+    <div class="stat"><div class="num">반복</div><div class="unit">수익 구조</div><div class="label">월 정기 납품 재발주 기반</div></div>
+  </div>
+  <div class="card card-accent">
+    <h4>🎯 사업의 핵심 가설</h4>
+    <p>링크어블은 <strong>제조사 섭외 완료 + 유통사 섭외 완료</strong> 상태에서, 휴게소 조리로봇 전용 식자재 시장의 <strong>영업 조율자(Sales Orchestrator)</strong> 포지션을 선점한다. 재고·물류를 직접 보유하지 않고, 계약 체계·품질 기준·영업 관계를 통해 안정적인 중간 마진을 확보하는 구조다. 이는 남양유업이 B2B에서 단순 납품이 아닌 "메뉴 제안 + 맞춤형 모델" 전략으로 고마진을 유지한 방식과 동일한 원리다.</p>
+  </div>
+</div>
+
+<!-- 2. BENCHMARK -->
+<div class="section">
+  <div class="sec-title">
+    <span class="sec-num">02</span>
+    <h2>벤치마킹 — 아워홈·풀무원·남양유업 사례 분석</h2>
+    <span class="badge badge-blue">Industry Benchmark</span>
+  </div>
+  <table class="bench mb-16">
+    <thead>
+      <tr><th>기업</th><th>진입 전략</th><th>마진 구조</th><th>핵심 성공 요인</th><th>링크어블 시사점</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>아워홈</strong></td>
+        <td>급식 → 식자재 유통 확장. 기존 고객 채널 활용</td>
+        <td>대량 납품 저마진 + SCM 효율로 보완</td>
+        <td>자체 물류(SCM) 인프라, 전국 배송망. 원스톱 납품</td>
+        <td>링크어블은 물류 내재화 불필요 → 기존 유통사 활용이 정답</td>
+      </tr>
+      <tr>
+        <td><strong>풀무원</strong></td>
+        <td>특정 채널(대학급식, 프랜차이즈) 집중 공략</td>
+        <td>채널 특화 상품으로 프리미엄 포지션</td>
+        <td>채널에 맞는 맞춤 제품 개발 + 브랜드 신뢰</td>
+        <td>휴게소 로봇 전용 스펙 = 풀무원식 채널 특화 전략</td>
+      </tr>
+      <tr>
+        <td><strong>남양유업</strong></td>
+        <td>B2B 단순 납품 아닌 메뉴 제안·사업모델 제안</td>
+        <td>B2B 통설(저마진) 깨고 고마진 유지</td>
+        <td>"제품 납품 + 메뉴 컨설팅" 패키지 → 가격협상력 우위</td>
+        <td>소스·블럭 납품 + 로봇 운용 효율화 컨설팅 = 동일 전략</td>
+      </tr>
+      <tr>
+        <td><strong>CJ프레시웨이</strong></td>
+        <td>밀 솔루션(전처리·소스·반조리) 전문화</td>
+        <td>단품보다 솔루션 패키지로 마진 방어</td>
+        <td>R&D 센터 + 센트럴키친 + 유통망 통합</td>
+        <td>소스 단품이 아닌 "라면 한 그릇 솔루션"으로 포지셔닝</td>
+      </tr>
+      <tr class="lynk">
+        <td><strong>🏆 링크어블 (당사)</strong></td>
+        <td>범화 로봇 채널 집중 + 에이전트형 중간유통</td>
+        <td>재고·물류 없이 15~25% 중간 마진</td>
+        <td>범화 관계 + 전용 스펙 제품 + 즉시 공급 가능</td>
+        <td>남양유업 모델 + 풀무원 채널특화 → 하이브리드 전략</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="insight">
+    <div class="insight-label">Benchmark Key Takeaway</div>
+    <p>아워홈·풀무원이 모두 처음부터 대규모 물류를 보유한 것이 아님. 아워홈은 급식 고객 채널을 먼저 확보한 뒤 유통으로 확장했고, 풀무원은 특정 채널 공략부터 시작했다. <strong>링크어블의 접근 — 범화 로봇 채널이라는 특정 진입구를 먼저 확보하고, 유통은 파트너에게 위임 — 은 업계 선례와 일치하는 가장 현실적인 초기 전략이다.</strong></p>
+  </div>
+</div>
+
+<!-- 3. BUSINESS MODEL -->
+<div class="section">
+  <div class="sec-title">
+    <span class="sec-num">03</span>
+    <h2>사업 구조 — 중간유통 에이전트 모델</h2>
+    <span class="badge badge-green">Business Model</span>
+  </div>
+
+  <h4 style="font-size:13px;margin-bottom:12px;color:var(--ink2);font-weight:600;">▶ 공급망 구조도</h4>
+  <div class="flow mb-16">
+    <div class="flow-box">
+      <h5>제조사 (OEM)</h5>
+      <p>소스·계란블럭 생산</p>
+      <div class="tag tag-g">이미 섭외 완료</div>
+    </div>
+    <div class="flow-arr">→</div>
+    <div class="flow-box hi">
+      <h5>링크어블</h5>
+      <p>영업·계약·품질기준 관리<br>주문 중계·마진 획득</p>
+      <div class="tag">핵심 역할</div>
+    </div>
+    <div class="flow-arr">→</div>
+    <div class="flow-box">
+      <h5>유통사 (3PL)</h5>
+      <p>물류·배송·재고 처리</p>
+      <div class="tag tag-g">이미 섭외 완료</div>
+    </div>
+    <div class="flow-arr">→</div>
+    <div class="flow-box">
+      <h5>휴게소 운영사</h5>
+      <p>범화 로봇 설치 매장</p>
+      <p style="color:#86efac;font-size:9px;margin-top:4px;">최종 고객</p>
+    </div>
+    <div class="flow-arr">→</div>
+    <div class="flow-box">
+      <h5>소비자</h5>
+      <p>고속도로 이용객</p>
+    </div>
+  </div>
+
+  <div class="g2 mb-16">
+    <div class="card card-accent">
+      <h4>💰 링크어블의 역할 (핵심 가치)</h4>
+      <ul>
+        <li><strong>영업 & 수주:</strong> 범화와 공동 휴게소 제안, 단독 제안 병행</li>
+        <li><strong>계약 관리:</strong> 납품 단가·조건·계약서 협상 및 체결</li>
+        <li><strong>품질 기준 설정:</strong> 소스/블럭 스펙 관리, 품질보증서 발행</li>
+        <li><strong>주문 중계:</strong> 휴게소 발주 → 유통사 전달 → 납품 확인</li>
+        <li><strong>관계 유지:</strong> 정기 방문·피드백 수집·재계약 관리</li>
+      </ul>
+    </div>
+    <div class="card card-blue">
+      <h4>🚫 링크어블이 하지 않는 것 (리스크 제거)</h4>
+      <ul>
+        <li>❌ 재고 직접 보유 → 유통사가 처리</li>
+        <li>❌ 배송·물류 운영 → 유통사가 처리</li>
+        <li>❌ 제조·생산 → OEM 제조사가 처리</li>
+        <li>❌ 대량 선금 지급 → 수주 후 발주 구조</li>
+        <li>❌ 식품 창고 운영 → 비용 발생 없음</li>
+      </ul>
+    </div>
+  </div>
+
+  <h4 style="font-size:13px;margin-bottom:12px;color:var(--ink2);font-weight:600;">▶ 마진 구조 시뮬레이션 (1개 납품 단위 기준)</h4>
+  <div class="margin-calc mb-16">
+    <div class="margin-row header">
+      <div>항목</div><div>단가 (예시)</div><div>비율</div><div>비고</div>
+    </div>
+    <div class="margin-row">
+      <div>제조사 공급가 (소스 1L 기준)</div><div>3,200원</div><div>64%</div><div>OEM 원가</div>
+    </div>
+    <div class="margin-row">
+      <div>유통사 물류비·마진</div><div>600원</div><div>12%</div><div>콜드체인 배송 포함</div>
+    </div>
+    <div class="margin-row subtotal">
+      <div>링크어블 공급원가 합계</div><div>3,800원</div><div>76%</div><div>제조+물류</div>
+    </div>
+    <div class="margin-row">
+      <div><strong>링크어블 중간 마진</strong></div><div><strong>700원</strong></div><div><strong>14%</strong></div><div>협상 여지 있음</div>
+    </div>
+    <div class="margin-row total">
+      <div>최종 납품가 (휴게소 매입가)</div><div>5,000원</div><div>100%</div><div>파일럿 기준가</div>
+    </div>
+  </div>
+  <div style="font-size:11px;color:var(--muted);text-align:right;margin-top:-8px;margin-bottom:16px;">* 계란블럭도 동일 구조 적용. 실제 단가는 협의 과정에서 조정.</div>
+
+  <div class="warn-box">
+    <div class="warn-label">리스크 관리 포인트</div>
+    <p>마진율 협상 핵심: 제조사에게는 "안정적 대량 거래처 확보"의 가치를, 유통사에게는 "반복 정기 물량"의 가치를 강조해 원가를 최대한 낮추는 것이 마진 보호의 핵심. 초기에는 14~18% 마진 목표, 레퍼런스 확보 후 소스 브랜드화로 20%+ 목표.</p>
+  </div>
+</div>
+
+<!-- 4. RISK MANAGEMENT -->
+<div class="section">
+  <div class="sec-title">
+    <span class="sec-num">04</span>
+    <h2>중소기업 리스크 관리 전략</h2>
+    <span class="badge badge-warn">Risk Management</span>
+  </div>
+  <div style="background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px;">
+    <div class="risk-row">
+      <div>리스크 유형</div><div>위험도</div><div>대응 전략</div>
+    </div>
+    <div class="risk-row">
+      <div>① 재고 부담<br><span style="font-size:10px;color:var(--muted);">미판매 시 손실</span></div>
+      <div><span style="color:var(--accent);font-weight:700;">제거됨</span></div>
+      <div>수주 후 발주 구조 — 선주문 없이 휴게소 확정 후 제조사에 발주. 재고 = 0</div>
+    </div>
+    <div class="risk-row">
+      <div>② 물류·배송 사고<br><span style="font-size:10px;color:var(--muted);">콜드체인 파손 등</span></div>
+      <div><span style="color:var(--accent);font-weight:700;">위임됨</span></div>
+      <div>유통사 계약 시 품질 보증 조항 삽입. 파손·지연 책임은 유통사에 귀속. 링크어블은 관리 감독만</div>
+    </div>
+    <div class="risk-row">
+      <div>③ 식품 위생 문제<br><span style="font-size:10px;color:var(--muted)">리콜, 행정처분</span></div>
+      <div><span style="color:#f5a623;font-weight:700;">중간</span></div>
+      <div>제조사 HACCP 인증 필수 확인. 납품 계약에 품질책임 조항 삽입. 링크어블은 스펙 관리자 역할. 식품위생법상 중간유통 책임 범위 사전 법무 검토</div>
+    </div>
+    <div class="risk-row">
+      <div>④ 대금 회수 리스크<br><span style="font-size:10px;color:var(--muted)">휴게소 연체 등</span></div>
+      <div><span style="color:#f5a623;font-weight:700;">중간</span></div>
+      <div>선금 or 월말 결산 조건으로 계약. 초기 파일럿은 30일 이내 결산 조건. 대형 운영사(풀무원FC, 아워홈 등)는 신용 안전. 중소 운영사는 선금 10~30% 요청</div>
+    </div>
+    <div class="risk-row">
+      <div>⑤ 범화 관계 리스크<br><span style="font-size:10px;color:var(--muted)">범화 내재화 시도</span></div>
+      <div><span style="color:var(--warn);font-weight:700;">높음</span></div>
+      <div>범화와 MOU 체결 시 최소 1년 우선공급 조항 삽입. 범화 입장에서 유통 내재화 = 추가 비용·리스크 → "외주가 유리한 이유" 데이터로 설득. 계약 관계 공식화가 최우선</div>
+    </div>
+    <div class="risk-row">
+      <div>⑥ 경쟁사 진입<br><span style="font-size:10px;color:var(--muted)">대형 유통사</span></div>
+      <div><span style="color:var(--warn);font-weight:700;">높음</span></div>
+      <div>6개월 내 3개 이상 레퍼런스 확보 → 전환비용 형성. 소스 레시피 IP화, 계란블럭 스펙 독점 유지. 납품 데이터 기반 운영 최적화로 대체 불가 포지션 구축</div>
+    </div>
+  </div>
+
+  <div class="g3">
+    <div class="card card-accent">
+      <h4>📋 계약 체계 핵심 조항</h4>
+      <ul>
+        <li>제조사: 스펙 독점 or 우선공급 조항</li>
+        <li>유통사: SLA(납품 시간·품질 기준)</li>
+        <li>범화: 우선공급 파트너십 MOU</li>
+        <li>휴게소: 최소 발주량 + 결제 조건</li>
+      </ul>
+    </div>
+    <div class="card card-blue">
+      <h4>🛡 품질 관리 체계</h4>
+      <ul>
+        <li>제조사 HACCP 인증 확인 (필수)</li>
+        <li>납품 전 샘플 검수 프로세스</li>
+        <li>링크어블 品質보증서 발행</li>
+        <li>이상 발생 시 48h 내 교체 보장</li>
+      </ul>
+    </div>
+    <div class="card card-gold">
+      <h4>💡 자금 리스크 최소화</h4>
+      <ul>
+        <li>수주 선금 수령 후 제조사 발주</li>
+        <li>초기 운전자본 최소화 목표</li>
+        <li>월 정산 사이클 구축</li>
+        <li>미수금 관리 엑셀 → CRM 이관</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- 5. OPERATIONS PLAN -->
+<div class="section">
+  <div class="sec-title">
+    <span class="sec-num">05</span>
+    <h2>운영 계획 — 단계별 실행 로드맵</h2>
+    <span class="badge badge-gold">Execution Plan</span>
+  </div>
+  <div class="g3 mb-16">
+    <div class="card" style="border-top:3px solid var(--accent);">
+      <h4 style="color:var(--accent);">Phase 1 · 0~3개월<br>"기반 구축"</h4>
+      <ul>
+        <li>범화 공식 MOU 체결</li>
+        <li>제조사·유통사 정식 계약</li>
+        <li>소스·계란블럭 식품인증 확인</li>
+        <li>파일럿 1~2개 사이트 수주</li>
+        <li>납품 프로세스 초안 완성</li>
+        <li>단가표·계약서 양식 완성</li>
+      </ul>
+    </div>
+    <div class="card" style="border-top:3px solid var(--blue);">
+      <h4 style="color:var(--blue);">Phase 2 · 3~9개월<br>"레퍼런스 확보"</h4>
+      <ul>
+        <li>파일럿 데이터 수집 및 정리</li>
+        <li>범화 전체 사이트 납품 확장</li>
+        <li>성과 보고서 제작 (영업 자료)</li>
+        <li>소스 브랜드명·패키지 개발</li>
+        <li>발주·납품 자동화 루틴 구축</li>
+        <li>5개 이상 레퍼런스 사이트 확보</li>
+      </ul>
+    </div>
+    <div class="card" style="border-top:3px solid var(--gold);">
+      <h4 style="color:var(--gold);">Phase 3 · 9~18개월<br>"확장 및 브랜드화"</h4>
+      <ul>
+        <li>타 로봇 브랜드 공략 시작</li>
+        <li>메뉴 다양화 (우동소스 등)</li>
+        <li>소스 IP 브랜드 정식 론칭</li>
+        <li>마진율 20%+ 목표 달성</li>
+        <li>월 3,000만원 이상 매출 목표</li>
+        <li>계약 자동화·ERP 도입 검토</li>
+      </ul>
+    </div>
+  </div>
+
+  <h4 style="font-size:13px;margin-bottom:12px;color:var(--ink2);font-weight:600;">▶ KPI 목표 지표</h4>
+  <div style="background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px;">
+    <div class="kpi-row header">
+      <div>지표</div><div>3개월</div><div>6개월</div><div>12개월</div><div>18개월</div>
+    </div>
+    <div class="kpi-row"><div>납품 사이트 수</div><div>1~2개</div><div class="val">5~8개</div><div class="val">15개+</div><div class="val">30개+</div></div>
+    <div class="kpi-row"><div>월 납품 매출</div><div>500만원</div><div class="val">1,500만원</div><div class="val">3,000만원</div><div class="val">6,000만원+</div></div>
+    <div class="kpi-row"><div>중간 마진율</div><div>14%</div><div>16%</div><div class="val">18%</div><div class="val">20%+</div></div>
+    <div class="kpi-row"><div>재발주율</div><div>초기 측정</div><div class="val">80%</div><div class="val">88%</div><div class="val">92%</div></div>
+    <div class="kpi-row"><div>범화 MOU</div><div class="val">체결</div><div>독점 조항</div><div>유지</div><div>갱신</div></div>
+  </div>
+
+  <div class="insight">
+    <div class="insight-label">운영 핵심 원칙</div>
+    <p>링크어블은 물류·재고가 아니라 <strong>"신뢰 관계와 정보 우위"</strong>로 수익을 만든다. 범화와 휴게소 사이의 정보 격차, 식자재 스펙에 관한 전문성, 납품 안정성 데이터가 링크어블의 진짜 자산이다. 이것을 시스템으로 쌓아가는 것이 18개월 목표.</p>
+  </div>
+</div>
+
+<!-- 6. LEGAL & COMPLIANCE -->
+<div class="section">
+  <div class="sec-title">
+    <span class="sec-num">06</span>
+    <h2>법적·행정 체크리스트</h2>
+    <span class="badge badge-warn">Legal & Compliance</span>
+  </div>
+  <div class="g2">
+    <div class="card card-warn">
+      <h4>📌 즉시 확인 필요 사항</h4>
+      <ul>
+        <li>식품 유통 사업 목적 법인 등기 확인 (링크어블 정관)</li>
+        <li>식품 영업 신고 여부 검토 (식품위생법 제37조)</li>
+        <li>계란블럭 냉장 유통 온도 기준 준수 확인</li>
+        <li>OEM 제조사 HACCP·식품인증 서류 수령</li>
+        <li>중간유통업자 식품표시 책임 범위 법무 검토</li>
+      </ul>
+    </div>
+    <div class="card card-blue">
+      <h4>📋 계약서 필수 포함 조항</h4>
+      <ul>
+        <li>[제조사 계약] 우선공급·스펙 독점 조항</li>
+        <li>[유통사 계약] SLA: 납품 리드타임, 냉장 보관 기준</li>
+        <li>[범화 MOU] 우선공급 기간, 경쟁 금지 조항</li>
+        <li>[휴게소 계약] 최소 발주량, 결제 조건, 자동 갱신</li>
+        <li>식품 사고 발생 시 책임 귀속 조항 (제조사에 귀속)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
